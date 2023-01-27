@@ -7,3 +7,7 @@
 ---
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/Andrey-Volkovitskiy/python-project-83/workflows/hexlet-check/badge.svg)](https://github.com/Andrey-Volkovitskiy/python-project-83/actions)    [![Lint](https://github.com/Andrey-Volkovitskiy/python-project-83/actions/workflows/flake8_linter.yml/badge.svg)](https://github.com/Andrey-Volkovitskiy/python-project-83/actions/workflows/flake8_linter.yml)
+
+---
+### Deployed application URL:
+https://web-page-analyzer.up.railway.app/
