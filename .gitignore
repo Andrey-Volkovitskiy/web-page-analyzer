@@ -15,6 +15,7 @@ dist/
 # Environments
 .env
 .venv/
+dev_database
 
 # VS Code
 .vscode/
