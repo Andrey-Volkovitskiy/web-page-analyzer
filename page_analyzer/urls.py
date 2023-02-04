@@ -1,4 +1,4 @@
-import db
+from . import db
 import psycopg2
 from psycopg2.extras import NamedTupleCursor
 import validators
@@ -13,22 +13,32 @@ def add(name):
         name - URL received from a user
 
     Returns:
+        id - website id assigned by the database
         error message - if somethig went wrong
     '''
-    is_valid_url = validators.url(name, public=True)
+    id, error = None, None
 
+    if len(name) == 0:
+        error = "URL обязателен"
+        return (id, error)
+
+    elif len(name) > 255:
+        error = "URL превышает 255 символов"
+        return (id, error)
+
+    is_valid_url = validators.url(name, public=True)
     url_parts = urlparse(name)
     normalized_name = urlunparse((
                         url_parts.scheme,
                         url_parts.netloc,
                         '', '', '', ''))
-
     if not is_valid_url or normalized_name == '':
-        return "Некорректный URL"
+        error = "Некорректный URL"
+        return (id, error)
 
     connection, connect_error = db.init()
     if connect_error:
-        return connect_error
+        return (id, connect_error)
 
     created_at = datetime.now(timezone.utc)
     with connection as conn:
@@ -38,9 +48,17 @@ def add(name):
                     "INSERT INTO urls (name, created_at) VALUES (%s, %s)",
                     (normalized_name, created_at)
                 )
+                conn.commit()
             except psycopg2.errors.UniqueViolation:
-                return "Страница уже существует"
+                error = "Страница уже существует"
+
+            if not error:
+                curs.execute(
+                    "SELECT id FROM urls WHERE name=%s", (normalized_name, ))
+                id = curs.fetchone()[0]
+
     conn.close()
+    return (id, error)
 
 
 def get_list(per_page=-1, page=1):
