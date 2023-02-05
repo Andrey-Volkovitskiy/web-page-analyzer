@@ -54,7 +54,7 @@ def show_url(id):
     )
 
 
-@app.get('/urls')   # проверить '/urls/
+@app.get('/urls')
 def show_urls():
     url_list = urls.get_list()
 
