@@ -2,7 +2,7 @@ import psycopg2
 import os
 
 
-def init():
+def connect():
     '''Establishes a database connection
 
     Returns:

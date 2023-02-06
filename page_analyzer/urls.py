@@ -1,4 +1,4 @@
-from . import db
+from page_analyzer import db
 import psycopg2
 from psycopg2.extras import NamedTupleCursor
 import validators
@@ -36,7 +36,7 @@ def add(name):
         error = "Некорректный URL"
         return (id, error)
 
-    connection, connect_error = db.init()
+    connection, connect_error = db.connect()
     if connect_error:
         return (id, connect_error)
 
@@ -45,17 +45,14 @@ def add(name):
         with conn.cursor() as curs:
             try:
                 curs.execute(
-                    "INSERT INTO urls (name, created_at) VALUES (%s, %s)",
+                    """INSERT INTO urls (name, created_at)
+                       VALUES (%s, %s)
+                       RETURNING id""",
                     (normalized_name, created_at)
                 )
-                conn.commit()
+                id = curs.fetchone()[0]
             except psycopg2.errors.UniqueViolation:
                 error = "Страница уже существует"
-
-            if not error:
-                curs.execute(
-                    "SELECT id FROM urls WHERE name=%s", (normalized_name, ))
-                id = curs.fetchone()[0]
 
     conn.close()
     return (id, error)
@@ -72,7 +69,7 @@ def get_list(per_page=-1, page=1):
     Returns:
         list of named tuples describung websites
     '''
-    connection, _ = db.init()
+    connection, _ = db.connect()
     with connection as conn:
         with conn.cursor(cursor_factory=NamedTupleCursor) as curs:
             limit = None if per_page == -1 else per_page
@@ -90,6 +87,46 @@ def get_list(per_page=-1, page=1):
     return list_of_urls
 
 
+def get_list_with_latest_check(per_page=-1, page=1):
+    '''Returns the list of websites with last check results for each
+
+    Agruments:
+        per_rage - number of websites per page
+            (default=-1, which means get all websites without pagination)
+        page - the number of requested page (default=1)
+
+    Returns:
+        list of named tuples describung websites
+    '''
+    connection, _ = db.connect()
+    with connection as conn:
+        with conn.cursor(cursor_factory=NamedTupleCursor) as curs:
+            limit = None if per_page == -1 else per_page
+            offset = 0 if per_page < 1 else per_page * (page - 1)
+
+            curs.execute(
+                """SELECT DISTINCT ON (urls.id)
+                          urls.id AS url_id,
+                          name,
+                          urls.created_at AS url_created_at,
+                          checks.id AS check_id,
+                          status_code,
+                          h1,
+                          title,
+                          description,
+                          checks.created_at AS check_created_at
+                   FROM urls
+                   LEFT JOIN checks ON urls.id = checks.url_id
+                   ORDER BY urls.id, check_created_at DESC
+                   LIMIT %s OFFSET %s""",
+                (limit, offset)
+            )
+            list_of_urls = curs.fetchall()
+
+    conn.close()
+    return list_of_urls
+
+
 def find(id):
     '''Returns information about certain website from database
 
@@ -99,13 +136,13 @@ def find(id):
     Returns:
         named tuple describung the website
     '''
-    connection, _ = db.init()
+    connection, _ = db.connect()
     with connection as conn:
         with conn.cursor(cursor_factory=NamedTupleCursor) as curs:
             curs.execute(
                 "SELECT * FROM urls WHERE id=%s", (id, )
             )
             the_url = curs.fetchone()
-
     conn.close()
+
     return the_url

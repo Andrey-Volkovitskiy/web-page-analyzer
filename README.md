@@ -10,4 +10,4 @@
 
 ---
 ### Deployed application URL:
-https://web-page-analyzer.up.railway.app/
+https://web-page-analyzer.up.railway.app/s
