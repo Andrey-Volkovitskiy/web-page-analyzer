@@ -1,9 +1,9 @@
-from page_analyzer import db, urls
+from page_analyzer import db, urls, analyzer
 from psycopg2.extras import NamedTupleCursor
 from datetime import datetime, timezone
 
 
-def add(url_id, status_code=None, h1=None, title=None, description=None):
+def add(url_id):
     '''Adds results of a website check to the database
 
     Agruments:
@@ -25,11 +25,16 @@ def add(url_id, status_code=None, h1=None, title=None, description=None):
     if connect_error:
         return (id, connect_error)
 
-    if urls.find(url_id) is None:
+    url = urls.find(url_id)
+
+    if url is None:
         error = "url_id not found in database"
         return (id, error)
 
-    created_at = datetime.now(timezone.utc)
+    check_result, check_error = analyzer.check(url.name)
+    if check_error:
+        return (id, check_error)
+
     with connection as conn:
         with conn.cursor() as curs:
             curs.execute(
@@ -37,7 +42,12 @@ def add(url_id, status_code=None, h1=None, title=None, description=None):
                    (url_id, status_code, h1, title, description, created_at)
                    VALUES (%s, %s, %s, %s, %s, %s)
                    RETURNING id""",
-                (url_id, status_code, h1, title, description, created_at)
+                (url_id,
+                 check_result['status_code'],
+                 check_result['h1'],
+                 check_result['title'],
+                 check_result['description'],
+                 datetime.now(timezone.utc))
             )
             id = curs.fetchone()[0]
 
