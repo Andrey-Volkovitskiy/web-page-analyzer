@@ -51,7 +51,6 @@ def add(url_id):
             )
             id = curs.fetchone()[0]
 
-    conn.close()
     return (id, error)
 
 
@@ -82,7 +81,6 @@ def get_list(url_id, per_page=-1, page=1):
             )
             list_of_checks = curs.fetchall()
 
-    conn.close()
     return list_of_checks
 
 
@@ -107,5 +105,4 @@ def find_latest(url_id):
             )
             the_check = curs.fetchone()
 
-    conn.close()
     return the_check
