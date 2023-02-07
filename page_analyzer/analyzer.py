@@ -1,4 +1,5 @@
 import requests
+from bs4 import BeautifulSoup
 
 
 def check(url_name):
@@ -18,10 +19,38 @@ def check(url_name):
     try:
         r = requests.get(url_name)
         result['status_code'] = r.status_code
-        result['h1'] = None
-        result['title'] = None
-        result['description'] = None
+
+        response_html = r.text
+        soup = BeautifulSoup(response_html, 'html.parser')
+
+        h1_tag = soup.h1
+        result['h1'] = h1_tag.get_text() if h1_tag else None
+
+        t_tag = soup.title
+        result['title'] = t_tag.get_text() if t_tag else None
+
+        d_tags = soup.find_all(is_description)
+        result['description'] = d_tags[0]['content'] if d_tags else None
+
     except requests.exceptions.RequestException:
         error = "Произошла ошибка при проверке"
 
     return (result, error)
+
+
+def is_description(tag):
+    '''Predicate function to check if the tag
+            is <meta name=description content=...
+
+    Agruments:
+        tag - html tag to explore
+
+    Returns:
+        True / False
+    '''
+    if tag.name == 'meta':
+        try:
+            if tag['name'] == 'description' and tag['content']:
+                return True
+        except KeyError:
+            pass
