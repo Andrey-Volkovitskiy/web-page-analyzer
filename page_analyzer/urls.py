@@ -42,8 +42,8 @@ def add(name):
 
     created_at = datetime.now(timezone.utc)
     with connection as conn:
-        with conn.cursor() as curs:
-            try:
+        try:
+            with conn.cursor() as curs:
                 curs.execute(
                     """INSERT INTO urls (name, created_at)
                        VALUES (%s, %s)
@@ -51,8 +51,17 @@ def add(name):
                     (normalized_name, created_at)
                 )
                 id = curs.fetchone()[0]
-            except psycopg2.errors.UniqueViolation:
-                error = "Страница уже существует"
+
+        except psycopg2.errors.UniqueViolation:
+            error = "Страница уже существует"
+            conn.rollback()
+            with conn.cursor() as curs:
+                curs.execute(
+                    """SELECT (id) FROM urls
+                       WHERE name = %s""",
+                    (normalized_name, )
+                )
+                id = curs.fetchone()[0]
 
     conn.close()
     return (id, error)

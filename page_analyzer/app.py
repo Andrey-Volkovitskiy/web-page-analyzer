@@ -29,13 +29,19 @@ def post_new():
     url = request.form['url']
 
     id, error = urls.add(url)
-    if error:
+
+    if not error:
+        flash('Страница успешно добавлена', 'success')
+
+    elif error == "Страница уже существует":
+        flash("Страница уже существует", "error")
+
+    else:
         return get_new(
             messages=[('error', error)],
             old_url=url
         )
 
-    flash('Страница успешно добавлена', 'success')
     return redirect(url_for('show_url', id=id))
 
 

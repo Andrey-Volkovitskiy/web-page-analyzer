@@ -20,6 +20,7 @@ def check(url_name):
         r = requests.get(url_name)
         result['status_code'] = r.status_code
 
+        r.encoding = r.apparent_encoding
         response_html = r.text
         soup = BeautifulSoup(response_html, 'html.parser')
 
