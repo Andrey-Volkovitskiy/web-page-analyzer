@@ -13,3 +13,6 @@ test:
 
 cov:
 	poetry run python3 -m pytest --cov
+
+install:
+	poetry install

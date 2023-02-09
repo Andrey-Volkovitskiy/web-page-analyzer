@@ -3,6 +3,7 @@
 **This is the 3rd training project of the Hexlet "Python Developer" course.**
 
 Flask app that analyzes web pages for basic SEO suitability.
+
 Deployed at: https://web-page-analyzer.up.railway.app/
 
 ---
@@ -35,5 +36,5 @@ This project was built using these tools:
 
 The application stores data using PostgresSQL. The database schema is described in *database.sql*
 
+- *make install* - comand to install dependencies
 - *make start* - command to start the application
-
