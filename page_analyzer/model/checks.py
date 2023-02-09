@@ -1,4 +1,4 @@
-from page_analyzer import db, urls, analyzer
+from page_analyzer.model import db, urls, analyzer
 from psycopg2.extras import NamedTupleCursor
 from datetime import datetime, timezone
 

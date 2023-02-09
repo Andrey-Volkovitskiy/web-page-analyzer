@@ -7,7 +7,7 @@ from flask import (Flask,
                    get_flashed_messages)
 from dotenv import load_dotenv
 import os
-from page_analyzer import urls, checks
+from page_analyzer.model import urls, checks
 
 
 load_dotenv()
