@@ -33,6 +33,7 @@ def post_new():
 
     try:
         id = urls.add(url)
+        flash("Страница успешно добавлена", "success")
 
     except model.DbConnecionError as e:
         flash(e.args[0], 'error')
