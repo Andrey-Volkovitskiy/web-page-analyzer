@@ -8,6 +8,7 @@ from flask import (Flask,
 from dotenv import load_dotenv
 import os
 from page_analyzer.model import urls, checks
+from page_analyzer import model
 
 
 load_dotenv()
@@ -16,7 +17,9 @@ app.secret_key = os.getenv('SECRET_KEY')
 
 
 @app.get('/')
-def get_new(messages=[], old_url=''):
+def get_new(messages=[], old_url=''):  # TODO удалить messages и old_url
+    messages = messages or get_flashed_messages(with_categories=True)
+
     return render_template(
         'index.html',
         messages=messages,
@@ -28,30 +31,34 @@ def get_new(messages=[], old_url=''):
 def post_new():
     url = request.form['url']
 
-    id, error = urls.add(url)
+    try:
+        id = urls.add(url)
 
-    if not error:
-        flash('Страница успешно добавлена', 'success')
+    except model.DbConnecionError as e:
+        flash(e.args[0], 'error')
+        return code_500()
 
-    elif error == "Страница уже существует":
-        flash("Страница уже существует", "error")
+    except model.IncorrectUrlName as e:
+        flash(e.args[0], "error")
+        return get_new(old_url=url)
 
-    else:
-        return get_new(
-            messages=[('error', error)],
-            old_url=url
-        )
+    except model.UrlAlreadyExists as e:
+        flash(e.args[0], "error")
+        id = e.args[1]
 
     return redirect(url_for('show_url', id=id))
 
 
 @app.get('/urls')
 def show_urls():
-    url_list = urls.get_list_with_latest_check()
-    url_list.sort(reverse=True, key=lambda x: x.url_created_at)
+    try:
+        url_list = urls.get_list_with_latest_check()
+        url_list.sort(reverse=True, key=lambda x: x.url_created_at)
+    except model.DbConnecionError as e:
+        flash(e.args[0], 'error')
+        return code_500()
 
     messages = get_flashed_messages(with_categories=True)
-
     return render_template(
         'show_urls.html',
         messages=messages,
@@ -61,7 +68,12 @@ def show_urls():
 
 @app.get('/urls/<int:id>')
 def show_url(id):
-    url = urls.find(id)
+    try:
+        url = urls.find(id)
+    except model.DbConnecionError as e:
+        flash(e.args[0], 'error')
+        return code_500()
+
     if not url:
         return code_404()
 
@@ -79,15 +91,24 @@ def show_url(id):
 
 @app.post('/urls/<int:url_id>/checks')
 def check(url_id):
-    _, error = checks.add(url_id=url_id)
-
-    if error:
-        flash(error, 'error')
-    else:
+    try:
+        checks.add(url_id=url_id)
         flash("Страница успешно проверена", "success")
+
+    except model.DbConnecionError as e:
+        flash(e.args[0], 'error')
+        return code_500()
+
+    except (model.DbConsistanceError, model.UrlCheckError) as e:
+        flash(e.args[0], "error")
 
     return redirect(url_for('show_url', id=url_id))
 
 
 def code_404():
     return render_template('404.html'), 404
+
+
+def code_500():
+    messages = get_flashed_messages(with_categories=True)
+    return render_template('500.html', messages=messages), 500

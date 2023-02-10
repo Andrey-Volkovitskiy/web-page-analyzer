@@ -1,4 +1,4 @@
-from page_analyzer.model import db, urls, analyzer
+from page_analyzer import model
 from psycopg2.extras import NamedTupleCursor
 from datetime import datetime, timezone
 
@@ -13,27 +13,18 @@ def add(url_id):
 
     Returns:
         id - check id assigned by the database
-        error message - if somethig went wrong
+        (or raise exception if something went wrong)
     '''
-    id, error = None, None
-
     if url_id is None:
-        error = "url_id can't be 'None'"
-        return (id, error)
+        raise model.UrlIdIsNone("url_id не может иметь значение 'None'")
 
-    connection, connect_error = db.connect()
-    if connect_error:
-        return (id, connect_error)
-
-    url = urls.find(url_id)
+    connection = model.db.connect()
+    url = model.urls.find(url_id)
 
     if url is None:
-        error = "url_id not found in the database"
-        return (id, error)
+        raise model.UrlIdNotFound(f"url_id '{url_id}' отсутсвует в базе даных")
 
-    check_result, check_error = analyzer.check(url.name)
-    if check_error:
-        return (id, check_error)
+    check_result = model.analyzer.check(url.name)
 
     with connection as conn:
         with conn.cursor() as curs:
@@ -51,7 +42,7 @@ def add(url_id):
             )
             id = curs.fetchone()[0]
 
-    return (id, error)
+    return id
 
 
 def get_list(url_id, per_page=-1, page=1):
@@ -66,7 +57,7 @@ def get_list(url_id, per_page=-1, page=1):
     Returns:
         list of named tuples describung websites
     '''
-    connection, _ = db.connect()
+    connection = model.db.connect()
     with connection as conn:
         with conn.cursor(cursor_factory=NamedTupleCursor) as curs:
             limit = None if per_page == -1 else per_page
@@ -93,7 +84,7 @@ def find_latest(url_id):
     Returns:
         named tuple describung the check results
     '''
-    connection, _ = db.init()
+    connection = model.db.connect()  # TODO with model.db.connect() as conn
     with connection as conn:
         with conn.cursor(cursor_factory=NamedTupleCursor) as curs:
             curs.execute(

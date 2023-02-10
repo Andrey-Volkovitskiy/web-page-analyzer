@@ -1,5 +1,6 @@
 import psycopg2
 import os
+from page_analyzer import model
 
 
 def connect():
@@ -7,14 +8,15 @@ def connect():
 
     Returns:
         connection - session instanse
-        error - error text message
+        (or raise exception if something went wrong)
     '''
-    connection, error = None, None
+    connection = None
     try:
         DATABASE_URL = os.getenv('DATABASE_URL')
         connection = psycopg2.connect(DATABASE_URL)
     except psycopg2.OperationalError as e:
-        error = (f"Can't establish connection to database. "
-                 f"Exception '{e}' type: {type(e)}")
+        raise model.DbConnecionError(
+            "Невозможно установить соединение с базой данных. "
+            f"Exception '{e}'")
 
-    return (connection, error)
+    return connection

@@ -1,4 +1,4 @@
-from page_analyzer.model import db
+from page_analyzer import model
 import psycopg2
 from psycopg2.extras import NamedTupleCursor
 import validators
@@ -14,17 +14,14 @@ def add(name):
 
     Returns:
         id - website id assigned by the database
-        error message - if somethig went wrong
+        (or raise exception if something went wrong)
     '''
-    id, error = None, None
 
     if len(name) == 0:
-        error = "URL обязателен"
-        return (id, error)
+        raise model.IncorrectUrlName("URL обязателен")
 
     elif len(name) > 255:
-        error = "URL превышает 255 символов"
-        return (id, error)
+        raise model.IncorrectUrlName("URL превышает 255 символов")
 
     is_valid_url = validators.url(name, public=True)
     url_parts = urlparse(name)
@@ -33,12 +30,9 @@ def add(name):
                         url_parts.netloc,
                         '', '', '', ''))
     if not is_valid_url or normalized_name == '':
-        error = "Некорректный URL"
-        return (id, error)
+        raise model.IncorrectUrlName("Некорректный URL")
 
-    connection, connect_error = db.connect()
-    if connect_error:
-        return (id, connect_error)
+    connection = model.db.connect()
 
     created_at = datetime.now(timezone.utc)
     with connection as conn:
@@ -53,7 +47,6 @@ def add(name):
                 id = curs.fetchone()[0]
 
         except psycopg2.errors.UniqueViolation:
-            error = "Страница уже существует"
             conn.rollback()
             with conn.cursor() as curs:
                 curs.execute(
@@ -62,8 +55,9 @@ def add(name):
                     (normalized_name, )
                 )
                 id = curs.fetchone()[0]
+            raise model.UrlAlreadyExists("Страница уже существует", id)
 
-    return (id, error)
+    return id
 
 
 def get_list(per_page=-1, page=1):
@@ -77,7 +71,7 @@ def get_list(per_page=-1, page=1):
     Returns:
         list of named tuples describung websites
     '''
-    connection, _ = db.connect()
+    connection = model.db.connect()
     with connection as conn:
         with conn.cursor(cursor_factory=NamedTupleCursor) as curs:
             limit = None if per_page == -1 else per_page
@@ -91,7 +85,6 @@ def get_list(per_page=-1, page=1):
             )
             list_of_urls = curs.fetchall()
 
-    conn.close()
     return list_of_urls
 
 
@@ -106,7 +99,7 @@ def get_list_with_latest_check(per_page=-1, page=1):
     Returns:
         list of named tuples describung websites
     '''
-    connection, _ = db.connect()
+    connection = model.db.connect()
     with connection as conn:
         with conn.cursor(cursor_factory=NamedTupleCursor) as curs:
             limit = None if per_page == -1 else per_page
@@ -144,7 +137,7 @@ def find(id):
     Returns:
         named tuple describung the website
     '''
-    connection, _ = db.connect()
+    connection = model.db.connect()
     with connection as conn:
         with conn.cursor(cursor_factory=NamedTupleCursor) as curs:
             curs.execute(
