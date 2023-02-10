@@ -28,7 +28,7 @@ def add(url_id):
     url = urls.find(url_id)
 
     if url is None:
-        error = "url_id not found in database"
+        error = "url_id not found in the database"
         return (id, error)
 
     check_result, check_error = analyzer.check(url.name)

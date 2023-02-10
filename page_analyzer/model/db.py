@@ -13,7 +13,7 @@ def connect():
     try:
         DATABASE_URL = os.getenv('DATABASE_URL')
         connection = psycopg2.connect(DATABASE_URL)
-    except Exception as e:
+    except psycopg2.OperationalError as e:
         error = (f"Can't establish connection to database. "
                  f"Exception '{e}' type: {type(e)}")
 

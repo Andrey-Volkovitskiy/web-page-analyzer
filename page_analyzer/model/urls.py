@@ -63,7 +63,6 @@ def add(name):
                 )
                 id = curs.fetchone()[0]
 
-    conn.close()
     return (id, error)
 
 
