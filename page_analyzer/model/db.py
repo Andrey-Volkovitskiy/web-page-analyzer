@@ -14,6 +14,7 @@ def connect():
     try:
         DATABASE_URL = os.getenv('DATABASE_URL')
         connection = psycopg2.connect(DATABASE_URL)
+
     except psycopg2.OperationalError as e:
         raise model.DbConnecionError(
             "Невозможно установить соединение с базой данных. "

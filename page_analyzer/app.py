@@ -7,7 +7,7 @@ from flask import (Flask,
                    get_flashed_messages)
 from dotenv import load_dotenv
 import os
-from page_analyzer.model import urls, checks
+from functools import wraps
 from page_analyzer import model
 
 
@@ -16,8 +16,45 @@ app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY')
 
 
+def checking_db_connection(function):
+    '''Decorates the routing function to check that connection
+            to the database was successfully established.
+
+    Returns:
+        If connection to the database cannot be established,
+            returns the code 500 and the page with corresponding message
+    '''
+    @wraps(function)
+    def inner(*args, **kwargs):
+        try:
+            return function(*args, **kwargs)
+
+        except model.DbConnecionError as e:
+            flash(e.args[0], 'error')
+            return code_500()
+
+    return inner
+
+
+def get_status_code(messages):
+    '''Returns the status code depends on messages.
+
+    Agruments:
+        messages - flash messages
+
+    Returns:
+        http status code
+    '''
+    if "error" not in [category for category, _ in messages]:
+        return 200
+    else:
+        return 422
+
+
 @app.get('/')
 def get_new():
+    '''Routing to display the add website form.'''
+
     messages = get_flashed_messages(with_categories=True)
     try:
         old_url = request.form['url']
@@ -32,16 +69,15 @@ def get_new():
 
 
 @app.post('/urls')
+@checking_db_connection
 def post_new():
+    '''Routing to add new website in database.'''
+
     url = request.form['url']
 
     try:
-        id = urls.add(url)
+        id = model.urls.add(url)
         flash("Страница успешно добавлена", "success")
-
-    except model.DbConnecionError as e:
-        flash(e.args[0], 'error')
-        return code_500()
 
     except model.IncorrectUrlName as e:
         flash(e.args[0], "error")
@@ -55,13 +91,12 @@ def post_new():
 
 
 @app.get('/urls')
+@checking_db_connection
 def show_urls():
-    try:
-        url_list = urls.get_list_with_latest_check()
-        url_list.sort(reverse=True, key=lambda x: x.url_created_at)
-    except model.DbConnecionError as e:
-        flash(e.args[0], 'error')
-        return code_500()
+    '''Routing to display a list of all websites.'''
+
+    url_list = model.urls.get_list_with_latest_check()
+    url_list.sort(reverse=True, key=lambda x: x.url_created_at)
 
     messages = get_flashed_messages(with_categories=True)
 
@@ -73,17 +108,15 @@ def show_urls():
 
 
 @app.get('/urls/<int:id>')
+@checking_db_connection
 def show_url(id):
-    try:
-        url = urls.find(id)
-    except model.DbConnecionError as e:
-        flash(e.args[0], 'error')
-        return code_500()
+    '''Routing to display information about a specific website.'''
+    url = model.urls.find(id)
 
     if not url:
         return code_404()
 
-    list_of_checks = checks.get_list(id)
+    list_of_checks = model.checks.get_list(id)
 
     messages = get_flashed_messages(with_categories=True)
 
@@ -96,14 +129,12 @@ def show_url(id):
 
 
 @app.post('/urls/<int:url_id>/checks')
+@checking_db_connection
 def check(url_id):
+    '''Routing to check a website for SEO.'''
     try:
-        checks.add(url_id=url_id)
+        model.checks.add(url_id=url_id)
         flash("Страница успешно проверена", "success")
-
-    except model.DbConnecionError as e:
-        flash(e.args[0], 'error')
-        return code_500()
 
     except (model.DbConsistanceError, model.UrlCheckError) as e:
         flash(e.args[0], "error")
@@ -112,16 +143,11 @@ def check(url_id):
 
 
 def code_404():
+    '''Routing for Page Not Found.'''
     return render_template('404.html'), 404
 
 
 def code_500():
+    '''Routing for Internal Server Error.'''
     messages = get_flashed_messages(with_categories=True)
     return render_template('500.html', messages=messages), 500
-
-
-def get_status_code(messages):
-    if "error" not in [category for category, _ in messages]:
-        return 200
-    else:
-        return 422
