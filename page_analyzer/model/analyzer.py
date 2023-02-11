@@ -19,6 +19,8 @@ def check(url_name):
     try:
         r = requests.get(url_name)
         result['status_code'] = r.status_code
+        if result['status_code'] != 200:
+            raise requests.exceptions.RequestException
 
         r.encoding = r.apparent_encoding
         response_html = r.text
