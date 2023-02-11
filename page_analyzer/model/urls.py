@@ -32,10 +32,8 @@ def add(name):
     if not is_valid_url or normalized_name == '':
         raise model.IncorrectUrlName("Некорректный URL")
 
-    connection = model.db.connect()
-
     created_at = datetime.now(timezone.utc)
-    with connection as conn:
+    with model.db.connect() as conn:
         try:
             with conn.cursor() as curs:
                 curs.execute(
@@ -71,8 +69,7 @@ def get_list(per_page=-1, page=1):
     Returns:
         list of named tuples describung websites
     '''
-    connection = model.db.connect()
-    with connection as conn:
+    with model.db.connect() as conn:
         with conn.cursor(cursor_factory=NamedTupleCursor) as curs:
             limit = None if per_page == -1 else per_page
             offset = 0 if per_page < 1 else per_page * (page - 1)
@@ -99,8 +96,7 @@ def get_list_with_latest_check(per_page=-1, page=1):
     Returns:
         list of named tuples describung websites
     '''
-    connection = model.db.connect()
-    with connection as conn:
+    with model.db.connect() as conn:
         with conn.cursor(cursor_factory=NamedTupleCursor) as curs:
             limit = None if per_page == -1 else per_page
             offset = 0 if per_page < 1 else per_page * (page - 1)
@@ -137,8 +133,7 @@ def find(id):
     Returns:
         named tuple describung the website
     '''
-    connection = model.db.connect()
-    with connection as conn:
+    with model.db.connect() as conn:
         with conn.cursor(cursor_factory=NamedTupleCursor) as curs:
             curs.execute(
                 "SELECT * FROM urls WHERE id=%s", (id, )

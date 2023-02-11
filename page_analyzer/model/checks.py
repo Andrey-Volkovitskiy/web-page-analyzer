@@ -18,7 +18,6 @@ def add(url_id):
     if url_id is None:
         raise model.UrlIdIsNone("url_id не может иметь значение 'None'")
 
-    connection = model.db.connect()
     url = model.urls.find(url_id)
 
     if url is None:
@@ -26,7 +25,7 @@ def add(url_id):
 
     check_result = model.analyzer.check(url.name)
 
-    with connection as conn:
+    with model.db.connect() as conn:
         with conn.cursor() as curs:
             curs.execute(
                 """INSERT INTO checks
@@ -57,8 +56,7 @@ def get_list(url_id, per_page=-1, page=1):
     Returns:
         list of named tuples describung websites
     '''
-    connection = model.db.connect()
-    with connection as conn:
+    with model.db.connect() as conn:
         with conn.cursor(cursor_factory=NamedTupleCursor) as curs:
             limit = None if per_page == -1 else per_page
             offset = 0 if per_page < 1 else per_page * (page - 1)
@@ -84,8 +82,7 @@ def find_latest(url_id):
     Returns:
         named tuple describung the check results
     '''
-    connection = model.db.connect()  # TODO with model.db.connect() as conn
-    with connection as conn:
+    with model.db.connect() as conn:
         with conn.cursor(cursor_factory=NamedTupleCursor) as curs:
             curs.execute(
                 """SELECT * FROM checks
