@@ -43,7 +43,7 @@ def add(url_id):
 
 
 def get_list(url_id):
-    '''Returns a list of checks for a certain url (implements pagination)
+    '''Returns a list of checks for a certain url.
 
     Agruments:
         url_id - id of the website of interest

@@ -59,7 +59,7 @@ def add(name):
 
 
 def get_list():
-    '''Returns the list of websites from database (implements pagination)
+    '''Returns the list of websites from database.
 
     Returns:
         list of named tuples describung websites
@@ -74,7 +74,7 @@ def get_list():
 
 
 def get_list_with_latest_check():
-    '''Returns the list of websites with last check result for each
+    '''Returns the list of websites with last check result for each.
 
     Returns:
         list of named tuples describung websites
