@@ -4,12 +4,10 @@ from datetime import datetime, timezone
 
 
 def add(url_id):
-    '''Adds results of a website check to the database
+    '''Checks a website and adds the results to the database
 
     Agruments:
-        url_id - id of the website to check
-        status_code - http response code
-        h1, title, description - the tags expracted from site hlml
+        url_id - id of the website to checkl
 
     Returns:
         id - check id assigned by the database
@@ -49,8 +47,8 @@ def get_list(url_id, per_page=-1, page=1):
 
     Agruments:
         url_id - id of the website of interest
-        per_rage - number of websites per page
-            (default=-1, which means get all websites without pagination)
+        per_page - number of items per page
+            (default=-1, which means get all items without pagination)
         page - the number of requested page (default=1)
 
     Returns:

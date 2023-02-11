@@ -10,9 +10,9 @@ def check(url_name):
         url_name - url of the website of interest
 
     Returns:
-        result - dict with status code, h1, title, description
-            recieved from the website
-        error message - if somethig went wrong
+        result - dict with status code, h1, title,
+            description recieved from the website
+        (or raise exception if something went wrong)
     '''
     result = {}
 
@@ -42,8 +42,7 @@ def check(url_name):
 
 
 def is_description(tag):
-    '''Predicate function to check if the tag
-            is <meta name=description content=...
+    '''Checks if the tag is <meta name=description content=...
 
     Agruments:
         tag - html tag to explore

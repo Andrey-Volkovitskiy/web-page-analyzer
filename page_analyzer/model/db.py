@@ -10,7 +10,6 @@ def connect():
         connection - session instanse
         (or raise exception if something went wrong)
     '''
-    connection = None
     try:
         DATABASE_URL = os.getenv('DATABASE_URL')
         connection = psycopg2.connect(DATABASE_URL)

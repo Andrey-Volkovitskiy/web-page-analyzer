@@ -62,8 +62,8 @@ def get_list(per_page=-1, page=1):
     '''Returns the list of websites from database (implements pagination)
 
     Agruments:
-        per_rage - number of websites per page
-            (default=-1, which means get all websites without pagination)
+        per_rage - number of items per page
+            (default=-1, which means get all items without pagination)
         page - the number of requested page (default=1)
 
     Returns:
@@ -86,11 +86,11 @@ def get_list(per_page=-1, page=1):
 
 
 def get_list_with_latest_check(per_page=-1, page=1):
-    '''Returns the list of websites with last check results for each
+    '''Returns the list of websites with last check result for each
 
     Agruments:
-        per_rage - number of websites per page
-            (default=-1, which means get all websites without pagination)
+        per_rage - number of items per page
+            (default=-1, which means get all items without pagination)
         page - the number of requested page (default=1)
 
     Returns:
