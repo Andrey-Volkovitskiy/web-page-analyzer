@@ -17,8 +17,12 @@ app.secret_key = os.getenv('SECRET_KEY')
 
 
 @app.get('/')
-def get_new(messages=[], old_url=''):  # TODO удалить messages и old_url
-    messages = messages or get_flashed_messages(with_categories=True)
+def get_new():
+    messages = get_flashed_messages(with_categories=True)
+    try:
+        old_url = request.form['url']
+    except KeyError:
+        old_url = ''
 
     return render_template(
         'index.html',
@@ -41,7 +45,7 @@ def post_new():
 
     except model.IncorrectUrlName as e:
         flash(e.args[0], "error")
-        return get_new(old_url=url)
+        return get_new()
 
     except model.UrlAlreadyExists as e:
         flash(e.args[0], "error")
