@@ -23,12 +23,12 @@ def add(name):
     elif len(name) > 255:
         raise model.IncorrectUrlName("URL превышает 255 символов")
 
-    is_valid_url = validators.url(name, public=True)
-    url_parts = urlparse(name)
+    url_parts = urlparse(name, scheme='http')
     normalized_name = urlunparse((
         url_parts.scheme,
-        url_parts.netloc,
+        url_parts.netloc or url_parts.path,
         '', '', '', ''))
+    is_valid_url = validators.url(normalized_name, public=True)
     if not is_valid_url or normalized_name == '':
         raise model.IncorrectUrlName("Некорректный URL")
 
