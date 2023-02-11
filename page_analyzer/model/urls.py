@@ -26,9 +26,9 @@ def add(name):
     is_valid_url = validators.url(name, public=True)
     url_parts = urlparse(name)
     normalized_name = urlunparse((
-                        url_parts.scheme,
-                        url_parts.netloc,
-                        '', '', '', ''))
+        url_parts.scheme,
+        url_parts.netloc,
+        '', '', '', ''))
     if not is_valid_url or normalized_name == '':
         raise model.IncorrectUrlName("Некорректный URL")
 
