@@ -27,7 +27,7 @@ def get_new(messages=[], old_url=''):  # TODO удалить messages и old_url
     )
 
 
-@app.post('/')
+@app.post('/urls')
 def post_new():
     url = request.form['url']
 
