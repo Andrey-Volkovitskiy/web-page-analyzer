@@ -24,7 +24,7 @@ def get_new(messages=[], old_url=''):  # TODO удалить messages и old_url
         'index.html',
         messages=messages,
         old_url=old_url
-    )
+    ), get_status_code(messages)
 
 
 @app.post('/urls')
@@ -60,11 +60,12 @@ def show_urls():
         return code_500()
 
     messages = get_flashed_messages(with_categories=True)
+
     return render_template(
         'show_urls.html',
         messages=messages,
         url_list=url_list
-    )
+    ), get_status_code(messages)
 
 
 @app.get('/urls/<int:id>')
@@ -87,7 +88,7 @@ def show_url(id):
         messages=messages,
         url=url,
         checks=list_of_checks
-    )
+    ), get_status_code(messages)
 
 
 @app.post('/urls/<int:url_id>/checks')
@@ -113,3 +114,10 @@ def code_404():
 def code_500():
     messages = get_flashed_messages(with_categories=True)
     return render_template('500.html', messages=messages), 500
+
+
+def get_status_code(messages):
+    if "error" not in [category for category, _ in messages]:
+        return 200
+    else:
+        return 422
