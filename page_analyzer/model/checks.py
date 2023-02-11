@@ -42,29 +42,22 @@ def add(url_id):
     return id
 
 
-def get_list(url_id, per_page=-1, page=1):
+def get_list(url_id):
     '''Returns a list of checks for a certain url (implements pagination)
 
     Agruments:
         url_id - id of the website of interest
-        per_page - number of items per page
-            (default=-1, which means get all items without pagination)
-        page - the number of requested page (default=1)
 
     Returns:
-        list of named tuples describung websites
+        list of named tuples describung checks
     '''
     with model.db.connect() as conn:
         with conn.cursor(cursor_factory=NamedTupleCursor) as curs:
-            limit = None if per_page == -1 else per_page
-            offset = 0 if per_page < 1 else per_page * (page - 1)
-
             curs.execute(
                 """SELECT * FROM checks
                    WHERE url_id=%s
-                   ORDER BY created_at DESC
-                   LIMIT %s OFFSET %s""",
-                (url_id, limit, offset)
+                   ORDER BY created_at DESC""",
+                (url_id, )
             )
             list_of_checks = curs.fetchall()
 
@@ -75,7 +68,7 @@ def find_latest(url_id):
     '''Returns information about last check of certain url
 
     Agruments:
-        id - id of the website of interest
+        url_id - id of the website of interest
 
     Returns:
         named tuple describung the check results
