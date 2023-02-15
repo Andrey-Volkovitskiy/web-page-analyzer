@@ -2,7 +2,7 @@ from page_analyzer import model
 import psycopg2
 from psycopg2.extras import NamedTupleCursor
 import validators
-from datetime import datetime, timezone
+from datetime import datetime
 from urllib.parse import urlparse, urlunparse
 
 
@@ -32,7 +32,7 @@ def add(name):
     if not is_valid_url or normalized_name == '':
         raise model.IncorrectUrlName("Некорректный URL")
 
-    created_at = datetime.now(timezone.utc)
+    created_at = datetime.utcnow()
     with model.db.connect() as conn:
         try:
             with conn.cursor() as curs:

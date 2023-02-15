@@ -10,7 +10,7 @@ lint:
 	poetry run flake8 page_analyzer
 
 test:
-	poetry run python3 -m pytest -ra -s -vvv
+	poetry run python3 -m pytest -ra -s -vvv tests/
 
 cov:
 	poetry run python3 -m pytest --cov

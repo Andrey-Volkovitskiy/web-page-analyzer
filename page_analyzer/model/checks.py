@@ -1,6 +1,6 @@
 from page_analyzer import model
 from psycopg2.extras import NamedTupleCursor
-from datetime import datetime, timezone
+from datetime import datetime
 
 
 def add(url_id):
@@ -35,7 +35,7 @@ def add(url_id):
                  check_result['h1'],
                  check_result['title'],
                  check_result['description'],
-                 datetime.now(timezone.utc))
+                 datetime.utcnow())
             )
             id = curs.fetchone()[0]
 
