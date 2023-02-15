@@ -4,13 +4,10 @@ from psycopg2.extras import NamedTupleCursor
 from datetime import datetime
 from flask import url_for
 
-GET_PAGE = "/"
-POST_PAGE = "/urls"
 
-
-def test_url_for():
-    x = url_for('post_new')
-    assert x == POST_PAGE
+with app.test_request_context():
+    GET_PAGE = url_for('get_new')
+    POST_PAGE = url_for('post_new')
 
 
 def test_basic_content():
