@@ -8,12 +8,14 @@ from flask import url_for
 with app.test_request_context():
     GET_PAGE = url_for('get_new')
     POST_PAGE = url_for('post_new')
+    SHOW_PAGE = url_for('show_url', id=1)
 
 
 def test_basic_content():
     client = app.test_client()
     response = client.get(GET_PAGE)
     assert "Бесплатно проверяйте сайты на SEO пригодность" in response.text
+    assert "Проверить" in response.text
 
 
 def test_add_new_correct_url(get_test_db):
@@ -25,7 +27,7 @@ def test_add_new_correct_url(get_test_db):
 
     assert response.status_code == 200
     assert len(response.history) == 1
-    assert response.request.path == "/urls/1"
+    assert response.request.path == SHOW_PAGE
     assert "Страница успешно добавлена" in response.text
     assert URL in response.text
 
@@ -47,7 +49,7 @@ def test_add_old_correct_url(get_test_db):
     response = client.post(POST_PAGE, data={'url': URL}, follow_redirects=True)
 
     assert response.status_code == 200
-    assert response.request.path == "/urls/1"
+    assert response.request.path == SHOW_PAGE
     assert "Страница успешно добавлена" in response.text
 
     pre_2nd_time = datetime.utcnow()
@@ -55,7 +57,7 @@ def test_add_old_correct_url(get_test_db):
 
     assert response.status_code == 422
     assert len(response.history) == 1
-    assert response.request.path == "/urls/1"
+    assert response.request.path == SHOW_PAGE
     assert "Страница уже существует" in response.text
     assert URL in response.text
 
