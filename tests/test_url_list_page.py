@@ -20,6 +20,10 @@ def test_basic_content(get_test_db):
     assert response.request.path == GET_PAGE
     assert "Сайты" in response.text
 
+    soup = BeautifulSoup(response.data, 'html.parser')
+    rows = soup.find_all('tr')
+    assert len(rows) == 1
+
 
 def test_missing_db_connection():
     os.environ["DATABASE_URL"] = "wrong"
