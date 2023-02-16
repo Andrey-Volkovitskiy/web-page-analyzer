@@ -13,7 +13,7 @@ test:
 	poetry run python3 -m pytest -ra -s -vvv tests/
 
 cov:
-	poetry run python3 -m pytest --cov
+	poetry run python3 -m pytest --cov=page_analyzer/ tests/
 
 install:
 	poetry install
