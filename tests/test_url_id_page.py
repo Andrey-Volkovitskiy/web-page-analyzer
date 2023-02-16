@@ -41,7 +41,7 @@ def test_missing_db_connection():
     assert "Невозможно установить соединение с базой данных." in response.text
 
 
-def test_correct_check(get_test_db):
+def test_check_correct_url(get_test_db):
     H1 = "Sign in"
     TITLE = "Gmail"
     DESCRIPTION = (
@@ -85,7 +85,7 @@ def test_correct_check(get_test_db):
     assert pre_2nd_time <= db_records[1].created_at
 
 
-def test_incorrect_check(get_test_db):
+def test_check_incorrect_url(get_test_db):
 
     connection = get_test_db
     add_url_to_db(connection, INCORRECT_URL)
