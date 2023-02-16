@@ -1,0 +1,39 @@
+name: Pytest
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8.10"]
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest pytest-cov pyyaml
+          pip install poetry
+          make install
+
+      - name: Test with pytest
+        run: |
+          PYTHONPATH=$GITHUB_WORKSPACE pytest
+      
+      - name: Test coverage
+        run: |
+          PYTHONPATH=$GITHUB_WORKSPACE pytest --cov --cov-report xml
+
+      - name: Publish code coverage
+        uses: paambaati/codeclimate-action@v3.2.0
+        env:
+          CC_TEST_REPORTER_ID: f4cb57cb20d261af4d7d9b684a131c1f49e336373d2928adea34c94185212d0e
