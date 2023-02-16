@@ -2,6 +2,7 @@ from page_analyzer.app import app
 from psycopg2.extras import NamedTupleCursor
 from datetime import datetime
 from flask import url_for
+import os
 
 
 with app.test_request_context():
@@ -29,6 +30,15 @@ def test_basic_content(get_test_db):
     assert response.status_code == 200
     assert CORRECT_URL in response.text
     assert "Запустить проверку" in response.text
+
+
+def test_missing_db_connection():
+    os.environ["DATABASE_URL"] = "wrong"
+    client = app.test_client()
+    response = client.get(GET_PAGE)
+    assert response.status_code == 500
+    assert response.request.path == GET_PAGE
+    assert "Невозможно установить соединение с базой данных." in response.text
 
 
 def test_correct_check(get_test_db):
