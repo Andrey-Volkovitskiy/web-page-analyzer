@@ -11,10 +11,9 @@ def get_test_db():
     with open("database.sql", "r") as file:
         db_creation_commands = file.read()
 
-    if os.path.isfile(TEST_ENV_FILE):
+    if not os.getenv('TEST_DATABASE_URL'):
         load_dotenv(TEST_ENV_FILE, override=True)
-    DATABASE_URL = os.getenv('DATABASE_URL')
-    print(DATABASE_URL)
+    DATABASE_URL = os.getenv('TEST_DATABASE_URL')
     connection = psycopg2.connect(DATABASE_URL)
 
     with connection as conn:
