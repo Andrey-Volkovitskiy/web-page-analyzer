@@ -42,4 +42,5 @@ jobs:
         run: |
           make test
         env:
-          DATABASE_URL: postgresql://postgres:postgres_pass@localhost:5432/postgres
+          SECRET_KEY: ${{POSTGRES_PASSWORD}}
+          DATABASE_URL: postgresql://postgres:${{POSTGRES_PASSWORD}}@localhost:5432/postgres
