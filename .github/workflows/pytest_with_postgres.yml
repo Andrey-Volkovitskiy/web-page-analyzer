@@ -43,5 +43,5 @@ jobs:
           make test
         env:
           SECRET_KEY: postgres
-          TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
           PROJECT_ENV: GitHub_Workflow_Tests
