@@ -5,12 +5,6 @@ import psycopg2
 from psycopg2.extras import NamedTupleCursor
 
 
-@pytest.fixture(scope="session")
-def init_tests():
-    if os.getenv('PROJECT_ENV') is None:
-        load_dotenv("tests/.env", override=True)
-
-
 @pytest.fixture()
 def get_test_db():
     if os.getenv('PROJECT_ENV') not in (
