@@ -7,10 +7,13 @@ from psycopg2.extras import NamedTupleCursor
 
 @pytest.fixture()
 def get_test_db():
+    TEST_ENV_FILE = "tests/.env"
     with open("database.sql", "r") as file:
         db_creation_commands = file.read()
-    load_dotenv("tests/.env", override=True)
-    DATABASE_URL = os.getenv('DATABASE_URL')
+
+    if os.path.isfile(TEST_ENV_FILE):
+        load_dotenv(TEST_ENV_FILE, override=True)
+        DATABASE_URL = os.getenv('DATABASE_URL')
     connection = psycopg2.connect(DATABASE_URL)
 
     with connection as conn:
