@@ -45,3 +45,12 @@ jobs:
           SECRET_KEY: postgres
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
           PROJECT_ENV: GitHub_Workflow_Tests
+
+      - name: Test coverage
+        run: |
+          poetry run python3 -m pytest --cov=page_analyzer/ tests/ --cov-report xml
+
+      - name: Publish code coverage
+        uses: paambaati/codeclimate-action@v3.2.0
+        env:
+          CC_TEST_REPORTER_ID: f4cb57cb20d261af4d7d9b684a131c1f49e336373d2928adea34c94185212d0e
