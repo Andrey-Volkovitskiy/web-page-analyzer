@@ -31,7 +31,7 @@ def test_missing_db_connection():
 
     try:
         client = app.test_client()
-        response = client.get(GET_PAGE)    
+        response = client.get(GET_PAGE)
     finally:
         os.environ["DATABASE_URL"] = actual_database_url
 
