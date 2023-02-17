@@ -14,6 +14,7 @@ def get_test_db():
     if os.path.isfile(TEST_ENV_FILE):
         load_dotenv(TEST_ENV_FILE, override=True)
     DATABASE_URL = os.getenv('DATABASE_URL')
+    print(DATABASE_URL)
     connection = psycopg2.connect(DATABASE_URL)
 
     with connection as conn:
