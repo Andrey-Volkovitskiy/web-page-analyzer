@@ -13,7 +13,7 @@ jobs:
         image: postgres
         # Provide the password for postgres
         env:
-          POSTGRES_PASSWORD: postgres_pass
+          POSTGRES_PASSWORD: postgres
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -42,5 +42,5 @@ jobs:
         run: |
           make test
         env:
-          SECRET_KEY: postgres_pass
+          SECRET_KEY: postgres
           DATABASE_URL: postgresql://postgres:postgres_pass@localhost:5432/postgres
