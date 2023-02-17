@@ -33,9 +33,15 @@ def test_basic_content(get_test_db):
 
 
 def test_missing_db_connection():
+    actual_database_url = os.getenv("DATABASE_URL")
     os.environ["DATABASE_URL"] = "wrong"
-    client = app.test_client()
-    response = client.get(GET_PAGE)
+
+    try:
+        client = app.test_client()
+        response = client.get(GET_PAGE)
+    finally:
+        os.environ["DATABASE_URL"] = actual_database_url
+
     assert response.status_code == 500
     assert response.request.path == GET_PAGE
     assert "Невозможно установить соединение с базой данных." in response.text
