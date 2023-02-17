@@ -11,7 +11,10 @@ from functools import wraps
 from page_analyzer import model
 
 
-load_dotenv()
+PROJECT_ENV = os.getenv('PROJECT_ENV')
+if PROJECT_ENV in ("Dev", "Local_Tests") or PROJECT_ENV is None:
+    load_dotenv()
+
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY')
 
