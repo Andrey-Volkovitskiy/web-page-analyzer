@@ -44,3 +44,6 @@ jobs:
         env:
           SECRET_KEY: postgres
           DATABASE_URL: postgresql://postgres:postgres_pass@localhost:5432/postgres
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
+          POSTGRES_PASSWORD: postgres
