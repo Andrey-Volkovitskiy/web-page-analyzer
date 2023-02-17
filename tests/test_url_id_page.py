@@ -6,7 +6,7 @@ import os
 
 
 with app.test_request_context():
-    CORRECT_URL = "http://www.gmail.com"
+    CORRECT_URL = "http://gmail.com"
     INCORRECT_URL = "http://wrong.com"
     GET_PAGE = url_for('show_url', id=1)
     POST_PAGE = url_for('check', url_id=1)
