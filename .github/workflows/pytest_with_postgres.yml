@@ -25,7 +25,6 @@ jobs:
           - 5432:5432
 
     steps:
-      # Downloads a copy of the code in your repository before running CI tests
       - name: Check out repository code
         uses: actions/checkout@v3
 
@@ -43,5 +42,4 @@ jobs:
         run: |
           make test
         env:
-          POSTGRES_HOST: localhost
-          DATABASE_URL = "postgresql://postgres:postgres_pass@localhost:5432/postgres"
+          DATABASE_URL: postgresql://postgres:postgres_pass@localhost:5432/postgres
