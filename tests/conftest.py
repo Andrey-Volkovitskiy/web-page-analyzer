@@ -5,12 +5,15 @@ import psycopg2
 from psycopg2.extras import NamedTupleCursor
 
 
-@pytest.fixture()
-def get_test_db():
+@pytest.fixture(scope="session")
+def init():
     if os.getenv('PROJECT_ENV') not in (
             "GitHub_Workflow_Tests", "Poduction"):
         load_dotenv("tests/.env", override=True)
 
+
+@pytest.fixture()
+def get_test_db():
     DATABASE_URL = os.getenv('DATABASE_URL')
     connection = psycopg2.connect(DATABASE_URL)
 
