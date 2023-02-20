@@ -27,8 +27,8 @@ This project was built using these tools:
 | [Pytest](https://docs.pytest.org/)               | Testing framework |
 | [Flake8](https://flake8.pycqa.org/)               | Linter to check code style |
 | [Code Climate](https://codeclimate.com/)               | Clean Code verification system |
-| [Github Actions](https://github.com/features/actions)               | Continuous Integration (CI) |
-| [Railway](https://railway.app)               | Ddeployment platform |
+| [GitHub Actions](https://github.com/features/actions)               | Continuous Integration (CI) |
+| [Railway](https://railway.app)               | Deployment platform |
 
 
 ---
@@ -38,4 +38,5 @@ The application stores data using PostgresSQL. The database schema is described 
 
 - *make install* - to install dependencies
 - *make start* - to start the application
-(more commands in Makefile)
+
+(service commands can be found in Makefile)
