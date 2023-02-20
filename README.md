@@ -36,5 +36,6 @@ This project was built using these tools:
 
 The application stores data using PostgresSQL. The database schema is described in *database.sql*
 
-- *make install* - comand to install dependencies
+- *make install* - to install dependencies
 - *make start* - to start the application
+(more commands in Makefile)
