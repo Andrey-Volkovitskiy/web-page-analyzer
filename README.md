@@ -1,6 +1,6 @@
 # Web page analyzer
 
-**This is the 3rd training project of the Hexlet "Python Developer" course.**
+**This is the 3rd training project of "Python Developer" course.**
 
 Flask app that analyzes web pages for basic SEO suitability.
 
