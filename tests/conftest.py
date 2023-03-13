@@ -23,7 +23,8 @@ def get_test_db():
 
     with connection as conn:
         with conn.cursor(cursor_factory=NamedTupleCursor) as curs:
-            curs.execute("DROP SCHEMA public CASCADE;")
+            curs.execute("DROP SCHEMA public CASCADE")
+            curs.execute("CREATE SCHEMA public")
             conn.commit()
             curs.execute(db_creation_commands)
 
