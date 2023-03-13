@@ -19,7 +19,10 @@ def get_test_db():
     DATABASE_URL = os.getenv('DATABASE_URL')
     connection = psycopg2.connect(DATABASE_URL)
 
-    with open("database.sql", "r") as file:
+    db_schema_path = os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__), '..', 'database.sql'))
+    with open(db_schema_path, "r") as file:
         db_creation_commands = file.read()
 
     with connection as conn:
