@@ -9,7 +9,7 @@ from psycopg2.extras import NamedTupleCursor
 def init():
     existing_db_url = os.getenv('DATABASE_URL')
     if not existing_db_url or (
-            existing_db_url == dotenv_values(".env")['DATABASE_URL']):
+            existing_db_url == dotenv_values(".env").get('DATABASE_URL')):
         load_dotenv("tests/.env", override=True)
 
 
