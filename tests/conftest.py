@@ -12,6 +12,7 @@ def init():
             os.getenv('PROJECT_ENV') == "Dev" and
             existing_db_url == dotenv_values(".env").get('DATABASE_URL')):
         load_dotenv("tests/.env", override=True)
+        os.environ['SECRET_KEY'] = "testPass"
 
 
 @pytest.fixture()
