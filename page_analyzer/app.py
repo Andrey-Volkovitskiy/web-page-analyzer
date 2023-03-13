@@ -17,6 +17,9 @@ if not os.getenv('DATABASE_URL'):
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY')
 
+# TODO Remove stub (used for hexlet.yaml > my_tets)
+app.secret_key = "slacnflskdhlsehcuilgnsh"
+
 
 def checking_db_connection(function):
     '''Decorates the routing function to check that connection

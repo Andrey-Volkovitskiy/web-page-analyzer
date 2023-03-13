@@ -13,8 +13,6 @@ def init():
             existing_db_url == dotenv_values(".env").get('DATABASE_URL')):
         load_dotenv("tests/.env", override=True)
 
-    os.environ['SECRET_KEY'] = "devPass"
-
 
 @pytest.fixture()
 def get_test_db():
