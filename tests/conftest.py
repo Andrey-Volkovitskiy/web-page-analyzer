@@ -7,8 +7,7 @@ from psycopg2.extras import NamedTupleCursor
 
 @pytest.fixture(scope="session")
 def init():
-    if os.getenv('PROJECT_ENV') not in (
-            "GitHub_Workflow_Tests", "Poduction"):
+    if not os.getenv('DATABASE_URL'):
         load_dotenv("tests/.env", override=True)
 
 
