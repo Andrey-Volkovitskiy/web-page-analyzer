@@ -1,13 +1,15 @@
 import pytest
-from dotenv import load_dotenv
+from dotenv import load_dotenv, dotenv_values
 import os
 import psycopg2
 from psycopg2.extras import NamedTupleCursor
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(autouse=True)  # (scope="session")
 def init():
-    if not os.getenv('DATABASE_URL'):
+    existing_db_url = os.getenv('DATABASE_URL')
+    if not existing_db_url or (
+            existing_db_url == dotenv_values(".env")['DATABASE_URL']):
         load_dotenv("tests/.env", override=True)
 
 
