@@ -25,3 +25,5 @@ jobs:
         uses: hexlet/project-action@release
         with:
           hexlet-id: ${{ secrets.HEXLET_ID }}
+        env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
