@@ -6,7 +6,7 @@ from psycopg2.extras import NamedTupleCursor
 from page_analyzer.app import app
 
 
-@pytest.fixture(autouse=True)  # (scope="session")
+@pytest.fixture(autouse=True)
 def init():
     load_dotenv("tests/.env", override=True)
 
