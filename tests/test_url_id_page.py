@@ -4,6 +4,7 @@ from datetime import datetime
 from flask import url_for
 import os
 import requests_mock
+from tests import conftest
 
 
 with app.test_request_context():
@@ -34,18 +35,7 @@ def test_basic_content(get_test_db):
 
 
 def test_missing_db_connection():
-    actual_database_url = os.getenv("DATABASE_URL")
-    os.environ["DATABASE_URL"] = "wrong"
-
-    try:
-        client = app.test_client()
-        response = client.get(GET_PAGE)
-    finally:
-        os.environ["DATABASE_URL"] = actual_database_url
-
-    assert response.status_code == 500
-    assert response.request.path == GET_PAGE
-    assert "Невозможно установить соединение с базой данных." in response.text
+    conftest.missing_db_connection(GET_PAGE)
 
 
 def test_check_correct_url(get_test_db):

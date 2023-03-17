@@ -3,6 +3,7 @@ from dotenv import load_dotenv, dotenv_values
 import os
 import psycopg2
 from psycopg2.extras import NamedTupleCursor
+from page_analyzer.app import app
 
 
 @pytest.fixture(autouse=True)  # (scope="session")
@@ -33,3 +34,18 @@ def get_test_db():
             curs.execute(db_creation_commands)
 
     return connection
+
+
+def missing_db_connection(url):
+    actual_database_url = os.getenv("DATABASE_URL")
+    os.environ["DATABASE_URL"] = "wrong"
+
+    try:
+        client = app.test_client()
+        response = client.get(url)
+    finally:
+        os.environ["DATABASE_URL"] = actual_database_url
+
+    assert response.status_code == 500
+    assert response.request.path == url
+    assert "Невозможно установить соединение с базой данных." in response.text
