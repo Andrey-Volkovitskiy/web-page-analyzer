@@ -1,5 +1,5 @@
 import pytest
-from dotenv import load_dotenv, dotenv_values
+from dotenv import load_dotenv
 import os
 import psycopg2
 from psycopg2.extras import NamedTupleCursor
@@ -8,11 +8,7 @@ from page_analyzer.app import app
 
 @pytest.fixture(autouse=True)  # (scope="session")
 def init():
-    existing_db_url = os.getenv('DATABASE_URL')
-    if not existing_db_url or (
-            os.getenv('PROJECT_ENV') == "Dev" and (
-            existing_db_url == dotenv_values(".env").get('DATABASE_URL'))):
-        load_dotenv("tests/.env", override=True)
+    load_dotenv("tests/.env", override=True)
 
 
 @pytest.fixture()

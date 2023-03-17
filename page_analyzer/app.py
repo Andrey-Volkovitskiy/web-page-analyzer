@@ -11,8 +11,7 @@ from functools import wraps
 from page_analyzer import model
 
 
-if not os.getenv('DATABASE_URL'):
-    load_dotenv(".env", override=True)
+load_dotenv(".env")
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY')

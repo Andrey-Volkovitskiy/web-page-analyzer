@@ -13,7 +13,7 @@ jobs:
         image: postgres:latest
         # Provide the password for postgres
         env:
-          POSTGRES_PASSWORD: ${{ SECRET_KEY }}
+          POSTGRES_PASSWORD: ${{ secrets.SECRET_KEY }}
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -42,16 +42,16 @@ jobs:
         run: |
           make test
         env:
-          SECRET_KEY: ${{ SECRET_KEY }}
-          DATABASE_URL: postgresql://postgres:${{ SECRET_KEY }}@localhost:5432/postgres
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DATABASE_URL: postgresql://postgres:${{ secrets.SECRET_KEY }}@localhost:5432/postgres
           PROJECT_ENV: GitHub_Workflow_Tests
 
       - name: Test coverage
         run: |
           poetry run python3 -m pytest --cov=page_analyzer/ tests/ --cov-report xml
         env:
-          SECRET_KEY: ${{ SECRET_KEY }}
-          DATABASE_URL: postgresql://postgres:${{ SECRET_KEY }}@localhost:5432/postgres
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DATABASE_URL: postgresql://postgres:${{ secrets.SECRET_KEY }}@localhost:5432/postgres
           PROJECT_ENV: GitHub_Workflow_Tests
 
       - name: Publish code coverage
