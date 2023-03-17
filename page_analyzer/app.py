@@ -14,7 +14,7 @@ from page_analyzer import model
 load_dotenv(".env")
 
 app = Flask(__name__)
-app.secret_key = os.getenv('SECRET_KEY') or "sakjdcblkjhckhdkcsjdhckjdhck"
+app.secret_key = os.getenv('SECRET_KEY')
 
 
 def checking_db_connection(function):
