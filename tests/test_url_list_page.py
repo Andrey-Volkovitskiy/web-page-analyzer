@@ -3,6 +3,7 @@ from datetime import datetime
 from flask import url_for
 import os
 from bs4 import BeautifulSoup
+import requests_mock
 
 
 with app.test_request_context():
@@ -47,7 +48,17 @@ def test_add_to_list(get_test_db):
     client.post(POST_URL, data={'url': CORRECT_URL})
     client.post(POST_URL, data={'url': CORRECT_URL})
     client.post(POST_URL, data={'url': INCORRECT_URL})
-    client.post(POST_CHECK)
+
+    fixture_path = os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__), 'fixtures/gmail.html'))
+    with open(fixture_path, 'r') as f:
+        HTML = f.read()
+
+    with requests_mock.Mocker() as m:
+        m.get(CORRECT_URL, text=HTML)
+        m.status_code = 200
+        client.post(POST_CHECK)
 
     response = client.get(GET_PAGE)
     assert response.status_code == 422
