@@ -9,7 +9,6 @@ from page_analyzer.app import app
 @pytest.fixture(autouse=True)  # (scope="session")
 def init():
     load_dotenv("tests/.env", override=True)
-    app.secret_key = os.getenv('SECRET_KEY')
 
 
 @pytest.fixture()
