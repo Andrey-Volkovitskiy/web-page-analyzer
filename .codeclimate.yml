@@ -1,0 +1,3 @@
+exclude_patterns:
+- "language/ru.py"
+- "language/en.py"
