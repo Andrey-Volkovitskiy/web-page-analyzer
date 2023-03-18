@@ -1,3 +1,3 @@
 exclude_patterns:
-  - "language/ru.py"
-  - "language/en.py"
+  - "page_analyzer/language/ru.py"
+  - "page_analyzer/language/en.py"
