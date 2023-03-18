@@ -1,4 +1,5 @@
 PAGE_ADDED_SUCCESSFULLY = "Страница успешно добавлена"
+PAGE_CHECKED_SUCCESSFULLY = "Страница успешно проверена"
 
 TEMPLATES = {
     'PAGE_ANALYZER': "Анализатор страниц",
