@@ -1,4 +1,5 @@
 from page_analyzer import model
+from page_analyzer.language import txt
 from psycopg2.extras import NamedTupleCursor
 from datetime import datetime
 
@@ -14,12 +15,13 @@ def add(url_id):
         (or raise exception if something went wrong)
     '''
     if url_id is None:
-        raise model.UrlIdIsNone("url_id не может иметь значение 'None'")
+        raise model.UrlIdIsNone(txt.MESSAGES['URL_ID_CANT_BE_NONE'])
 
     url = model.urls.find(url_id)
 
     if url is None:
-        raise model.UrlIdNotFound(f"url_id '{url_id}' отсутсвует в базе даных")
+        raise model.UrlIdNotFound(
+            f"url_id '{url_id}' {txt.MESSAGES['ABSENT_IN_DB']}")
 
     check_result = model.analyzer.check(url.name)
 

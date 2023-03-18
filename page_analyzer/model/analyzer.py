@@ -1,5 +1,6 @@
 import requests
 from page_analyzer import model
+from page_analyzer.language import txt
 from bs4 import BeautifulSoup
 
 
@@ -36,7 +37,7 @@ def check(url_name):
         result['description'] = d_tags[0]['content'] if d_tags else None
 
     except requests.exceptions.RequestException:
-        raise model.UrlCheckError("Произошла ошибка при проверке")
+        raise model.UrlCheckError(txt.MESSAGES['ERROR_DURING_CHECK'])
 
     return result
 

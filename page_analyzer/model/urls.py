@@ -1,4 +1,5 @@
 from page_analyzer import model
+from page_analyzer.language import txt
 import psycopg2
 from psycopg2.extras import NamedTupleCursor
 import validators
@@ -18,10 +19,10 @@ def add(name):
     '''
 
     if len(name) == 0:
-        raise model.IncorrectUrlName("URL обязателен")
+        raise model.IncorrectUrlName(txt.MESSAGES['URL_CANT_BE_EMPTY'])
 
     elif len(name) > 255:
-        raise model.IncorrectUrlName("URL превышает 255 символов")
+        raise model.IncorrectUrlName(txt.MESSAGES['URL_TOO_LONG'])
 
     url_parts = urlparse(name, scheme='http')
     normalized_name = urlunparse((
@@ -30,7 +31,7 @@ def add(name):
         '', '', '', ''))
     is_valid_url = validators.url(normalized_name, public=True)
     if not is_valid_url or normalized_name == '':
-        raise model.IncorrectUrlName("Некорректный URL")
+        raise model.IncorrectUrlName(txt.MESSAGES['INCORRECT_URL'])
 
     created_at = datetime.utcnow()
     with model.db.connect() as conn:
@@ -53,7 +54,7 @@ def add(name):
                     (normalized_name, )
                 )
                 id = curs.fetchone()[0]
-            raise model.UrlAlreadyExists("Страница уже существует", id)
+            raise model.UrlAlreadyExists(txt.MESSAGES['PAGE_EXISTS'], id)
 
     return id
 

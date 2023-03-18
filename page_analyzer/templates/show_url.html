@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>Сайт: {{ url.name }}</h1>
+  <h1>{{ txt.WEBSITE }}: {{ url.name }}</h1>
 
   <div class="table-responsive">
     <table class="table table-bordered table-hover text-nowrap" data-test="url">
@@ -11,31 +11,31 @@
           <td>{{ url.id }}</td>
         </tr>
         <tr>
-          <td>Имя</td>
+          <td>{{ txt.NAME }}</td>
           <td>{{ url.name }}</td>
         </tr>
         <tr>
-          <td>Дата создания</td>
+          <td>{{ txt.CREATION_DATE }}</td>
           <td>{{ url.created_at.date() }}</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <h2 class="mt-5 mb-3">Проверки</h2>
+  <h2 class="mt-5 mb-3">{{ txt.CHECKS }}</h2>
   <form method="post" action="{{ url_for('check', url_id=url.id) }}">
-    <input type="submit" class="btn btn-primary" value="Запустить проверку">
+    <input type="submit" class="btn btn-primary" value="{{ txt.RUN_CHECK }}">
   </form>
   <div>
     <table class="table table-bordered table-hover mt-2" data-test="checks">
       <tbody>
         <tr>
           <th>ID</th>
-          <th>Код ответа</th>
+          <th>{{ txt.STATUS_CODE_LC }}</th>
           <th>h1</th>
           <th>title</th>
           <th>description</th>
-          <th>Дата создания</th>
+          <th>{{ txt.CREATION_DATE_LC }}</th>
         </tr>
         
         {% for check in checks %}

@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 import os
 from functools import wraps
 from page_analyzer import model
+from page_analyzer.language import txt
 import secrets
 
 
@@ -66,7 +67,8 @@ def get_new():
     return render_template(
         'index.html',
         messages=messages,
-        old_url=old_url
+        old_url=old_url,
+        txt=txt.TEMPLATES
     ), get_status_code(messages)
 
 
@@ -79,7 +81,7 @@ def post_new():
 
     try:
         id = model.urls.add(url)
-        flash("Страница успешно добавлена", "success")
+        flash(txt.PAGE_ADDED_SUCCESSFULLY, "success")
 
     except model.IncorrectUrlName as e:
         flash(e.args[0], "error")
@@ -105,7 +107,8 @@ def show_urls():
     return render_template(
         'show_urls.html',
         messages=messages,
-        url_list=url_list
+        url_list=url_list,
+        txt=txt.TEMPLATES
     ), get_status_code(messages)
 
 
@@ -126,7 +129,8 @@ def show_url(id):
         'show_url.html',
         messages=messages,
         url=url,
-        checks=list_of_checks
+        checks=list_of_checks,
+        txt=txt.TEMPLATES
     ), get_status_code(messages)
 
 
@@ -146,10 +150,14 @@ def check(url_id):
 
 def code_404():
     '''Routing for Page Not Found.'''
-    return render_template('404.html'), 404
+    return render_template('404.html', txt=txt.TEMPLATES), 404
 
 
 def code_500():
     '''Routing for Internal Server Error.'''
     messages = get_flashed_messages(with_categories=True)
-    return render_template('500.html', messages=messages), 500
+    return render_template(
+        '500.html',
+        messages=messages,
+        txt=txt.TEMPLATES
+        ), 500

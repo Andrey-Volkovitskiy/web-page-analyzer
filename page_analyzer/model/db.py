@@ -1,6 +1,7 @@
 import psycopg2
 import os
 from page_analyzer import model
+from page_analyzer.language import txt
 
 
 def connect():
@@ -16,7 +17,7 @@ def connect():
 
     except (psycopg2.OperationalError, psycopg2.ProgrammingError) as e:
         raise model.DbConnecionError(
-            "Невозможно установить соединение с базой данных. "
+            f"{txt.MESSAGES['CANT_CONNECT_TO_DB']} "
             f"Exception '{e}'")
 
     return connection

@@ -1,16 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>Сайты</h1>
+  <h1>{{ txt.WEBSITES }}</h1>
 
   <div class="table-responsive">
     <table class="table table-bordered table-hover text-nowrap" data-test="urls">
       <tbody>
         <tr>
           <th>ID</th>
-          <th>Имя</th>
-          <th>Последняя проверка</th>
-          <th>Код ответа</th>
+          <th>{{ txt.NAME }}</th>
+          <th>{{ txt.LAST_CHECK }}</th>
+          <th>{{ txt.STATUS_CODE }}</th>
         </tr>
         
         {% for url in url_list %}
