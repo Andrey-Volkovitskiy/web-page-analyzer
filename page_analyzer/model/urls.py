@@ -59,21 +59,6 @@ def add(name):
     return id
 
 
-def get_list():
-    '''Returns the list of websites from database.
-
-    Returns:
-        list of named tuples describung websites
-    '''
-    with model.db.connect() as conn:
-        with conn.cursor(cursor_factory=NamedTupleCursor) as curs:
-            curs.execute(
-                """SELECT * FROM urls
-                 ORDER BY created_at DESC
-            """)
-            return curs.fetchall()
-
-
 def get_list_with_latest_check():
     '''Returns the list of websites with last check result for each.
 
