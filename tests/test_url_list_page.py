@@ -40,7 +40,7 @@ def test_add_to_list(get_test_db):
     client.post(POST_URL, data={'url': INCORRECT_URL})
 
     fixture_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__), 'fixtures/gmail.html'))
+        os.path.dirname(__file__), 'fixtures/gmail.html'))
     with open(fixture_path, 'r') as f:
         HTML = f.read()
 
