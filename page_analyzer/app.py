@@ -140,7 +140,7 @@ def check(url_id):
     '''Routing to check a website for SEO.'''
     try:
         model.checks.add(url_id=url_id)
-        flash("Страница успешно проверена", "success")
+        flash(txt.PAGE_CHECKED_SUCCESSFULLY, "success")
 
     except (model.DbConsistanceError, model.UrlCheckError) as e:
         flash(e.args[0], "error")
@@ -160,4 +160,4 @@ def code_500():
         '500.html',
         messages=messages,
         txt=txt.TEMPLATES
-        ), 500
+    ), 500
