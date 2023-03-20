@@ -7,7 +7,6 @@ from flask import (Flask,
                    get_flashed_messages)
 from dotenv import load_dotenv
 import os
-from functools import wraps
 from page_analyzer import model
 from page_analyzer.language import txt
 import secrets
@@ -17,26 +16,6 @@ load_dotenv(".env")
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY') or secrets.token_hex(16)
-
-
-def checking_db_connection(function):
-    '''Decorates the routing function to check that connection
-            to the database was successfully established.
-
-    Returns:
-        If connection to the database cannot be established,
-            returns the code 500 and the page with corresponding message
-    '''
-    @wraps(function)
-    def inner(*args, **kwargs):
-        try:
-            return function(*args, **kwargs)
-
-        except model.DbConnecionError as e:
-            flash(e.args[0], 'error')
-            return code_500()
-
-    return inner
 
 
 def get_status_code(messages):
@@ -73,7 +52,6 @@ def get_new():
 
 
 @app.post('/urls')
-@checking_db_connection
 def post_new():
     '''Routing to add new website in database.'''
 
@@ -95,7 +73,6 @@ def post_new():
 
 
 @app.get('/urls')
-@checking_db_connection
 def show_urls():
     '''Routing to display a list of all websites.'''
 
@@ -113,7 +90,6 @@ def show_urls():
 
 
 @app.get('/urls/<int:id>')
-@checking_db_connection
 def show_url(id):
     '''Routing to display information about a specific website.'''
     url = model.urls.find(id)
@@ -135,7 +111,6 @@ def show_url(id):
 
 
 @app.post('/urls/<int:url_id>/checks')
-@checking_db_connection
 def check(url_id):
     '''Routing to check a website for SEO.'''
     try:
@@ -146,6 +121,12 @@ def check(url_id):
         flash(e.args[0], "error")
 
     return redirect(url_for('show_url', id=url_id))
+
+
+@app.errorhandler(model.DbConnecionError)
+def handle_DbConnecionError(e):
+    flash(e.args[0], 'error')
+    return code_500()
 
 
 def code_404():
