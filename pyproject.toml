@@ -1,10 +1,18 @@
 [tool.poetry]
 name = "hexlet-code"
 version = "0.1.0"
-description = ""
+description = "Flask web app that analyzes web pages for basic SEO suitability."
 authors = ["Andrey <volk000@gmail.com>"]
 readme = "README.md"
 packages = [{include = "page_analyzer"}]
+repository = "https://github.com/Andrey-Volkovitskiy/python-project-83"
+classifiers = [
+    "Programming Language :: Python :: 3.8",
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Education",
+    "Operating System :: Unix",
+    "Topic :: Internet :: WWW/HTTP :: Site Management"
+]
 
 [tool.poetry.dependencies]
 python = "^3.8.1"
