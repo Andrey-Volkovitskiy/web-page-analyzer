@@ -18,15 +18,13 @@ app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY') or secrets.token_hex(16)
 
 
-def get_status_code(messages):
+def get_status_code():
     '''Returns the status code depends on messages.
-
-    Agruments:
-        messages - flash messages
 
     Returns:
         http status code
     '''
+    messages = get_flashed_messages(with_categories=True)
     if "error" not in [category for category, _ in messages]:
         return 200
     else:
@@ -37,7 +35,6 @@ def get_status_code(messages):
 def get_new():
     '''Routing to display the add website form.'''
 
-    messages = get_flashed_messages(with_categories=True)
     try:
         old_url = request.form['url']
     except KeyError:
@@ -45,10 +42,9 @@ def get_new():
 
     return render_template(
         'index.html',
-        messages=messages,
         old_url=old_url,
         txt=txt.TEMPLATES
-    ), get_status_code(messages)
+    ), get_status_code()
 
 
 @app.post('/urls')
@@ -79,14 +75,11 @@ def show_urls():
     url_list = model.urls.get_list_with_latest_check()
     url_list.sort(reverse=True, key=lambda x: x.url_created_at)
 
-    messages = get_flashed_messages(with_categories=True)
-
     return render_template(
         'show_urls.html',
-        messages=messages,
         url_list=url_list,
         txt=txt.TEMPLATES
-    ), get_status_code(messages)
+    ), get_status_code()
 
 
 @app.get('/urls/<int:id>')
@@ -99,15 +92,12 @@ def show_url(id):
 
     list_of_checks = model.checks.get_list(id)
 
-    messages = get_flashed_messages(with_categories=True)
-
     return render_template(
         'show_url.html',
-        messages=messages,
         url=url,
         checks=list_of_checks,
         txt=txt.TEMPLATES
-    ), get_status_code(messages)
+    ), get_status_code()
 
 
 @app.post('/urls/<int:url_id>/checks')
@@ -136,9 +126,7 @@ def code_404():
 
 def code_500():
     '''Routing for Internal Server Error.'''
-    messages = get_flashed_messages(with_categories=True)
     return render_template(
         '500.html',
-        messages=messages,
         txt=txt.TEMPLATES
     ), 500
