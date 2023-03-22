@@ -4,7 +4,7 @@ from page_analyzer import exceptions
 from page_analyzer.language import txt
 
 
-def connect():
+def connect_to_db():
     '''Establishes a database connection
 
     Returns:

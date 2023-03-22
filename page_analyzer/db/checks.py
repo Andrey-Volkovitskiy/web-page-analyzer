@@ -1,6 +1,6 @@
-from page_analyzer import model
 from psycopg2.extras import NamedTupleCursor
 from datetime import datetime
+from page_analyzer.db.connect import connect_to_db
 
 
 def add(url_id, check_result):
@@ -15,7 +15,7 @@ def add(url_id, check_result):
         id - check id assigned by the database
         (or raise exception if something went wrong)
     '''
-    with model.db.connect() as conn:
+    with connect_to_db() as conn:
         with conn.cursor() as curs:
             curs.execute(
                 """INSERT INTO checks
@@ -43,7 +43,7 @@ def get_list(url_id):
     Returns:
         list of named tuples describung checks
     '''
-    with model.db.connect() as conn:
+    with connect_to_db() as conn:
         with conn.cursor(cursor_factory=NamedTupleCursor) as curs:
             curs.execute(
                 """SELECT * FROM checks
@@ -65,7 +65,7 @@ def find_latest(url_id):
     Returns:
         named tuple describung the check results
     '''
-    with model.db.connect() as conn:
+    with connect_to_db() as conn:
         with conn.cursor(cursor_factory=NamedTupleCursor) as curs:
             curs.execute(
                 """SELECT * FROM checks

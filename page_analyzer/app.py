@@ -8,7 +8,7 @@ from flask import (Flask,
                    get_flashed_messages)
 from dotenv import load_dotenv
 import os
-from page_analyzer import model
+import page_analyzer.db as db
 from page_analyzer import url_checker
 from page_analyzer import url_validator
 from page_analyzer.language import txt
@@ -63,7 +63,7 @@ def post_new():
         return redirect(url_for('get_new'))
 
     try:
-        id = model.urls.add(normalized_name)
+        id = db.urls.add(normalized_name)
         flash(txt.PAGE_ADDED_SUCCESSFULLY, "success")
 
     except exceptions.UrlAlreadyExists as e:
@@ -78,7 +78,7 @@ def post_new():
 def show_urls():
     '''Routing to display a list of all websites.'''
 
-    url_list = model.urls.get_list_with_latest_check()
+    url_list = db.urls.get_list_with_latest_check()
     url_list.sort(reverse=True, key=lambda x: x.url_created_at)
 
     return render_template(
@@ -91,12 +91,12 @@ def show_urls():
 @app.get('/urls/<int:id>')
 def show_url(id):
     '''Routing to display information about a specific website.'''
-    url = model.urls.find(id)
+    url = db.urls.find(id)
 
     if not url:
         return get_404()
 
-    list_of_checks = model.checks.get_list(id)
+    list_of_checks = db.checks.get_list(id)
 
     return render_template(
         'show_url.html',
@@ -109,7 +109,7 @@ def show_url(id):
 @app.post('/urls/<int:url_id>/checks')
 def check(url_id):
     '''Routing to check a website for SEO.'''
-    url = model.urls.find(url_id)
+    url = db.urls.find(url_id)
 
     check_result = None
     try:
@@ -118,7 +118,7 @@ def check(url_id):
         flash(e.args[0], "error")
 
     if check_result:
-        model.checks.add(url_id, check_result)
+        db.checks.add(url_id, check_result)
         flash(txt.PAGE_CHECKED_SUCCESSFULLY, "success")
 
     return redirect(url_for('show_url', id=url_id))

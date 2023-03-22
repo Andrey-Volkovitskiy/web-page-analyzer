@@ -1,5 +1,5 @@
 from page_analyzer import exceptions
-from page_analyzer import model
+from page_analyzer.db.connect import connect_to_db
 from page_analyzer.language import txt
 from psycopg2.extras import NamedTupleCursor
 from datetime import datetime
@@ -16,7 +16,7 @@ def add(url_name):
         (or raise exception if something went wrong)
     '''
     created_at = datetime.utcnow()
-    with model.db.connect() as conn:
+    with connect_to_db() as conn:
         with conn.cursor() as curs:
             curs.execute(
                     """SELECT (id) FROM urls
@@ -47,7 +47,7 @@ def get_list_with_latest_check():
     Returns:
         list of named tuples describung websites
     '''
-    with model.db.connect() as conn:
+    with connect_to_db() as conn:
         with conn.cursor(cursor_factory=NamedTupleCursor) as curs:
             curs.execute(
                 """SELECT DISTINCT ON (urls.id)
@@ -76,7 +76,7 @@ def find(id):
     Returns:
         named tuple describung the website
     '''
-    with model.db.connect() as conn:
+    with connect_to_db() as conn:
         with conn.cursor(cursor_factory=NamedTupleCursor) as curs:
             curs.execute(
                 "SELECT * FROM urls WHERE id=%s", (id, )
