@@ -1,5 +1,6 @@
 from flask import (Flask,
                    request,
+                   session,
                    url_for,
                    flash,
                    redirect,
@@ -35,9 +36,11 @@ def get_status_code():
 def get_new():
     '''Routing to display the add website form.'''
 
+    old_url = session.pop('old_url', '')
+
     return render_template(
         'index.html',
-        old_url=request.form.get('url', ''),
+        old_url=old_url,
         txt=txt.TEMPLATES
     ), get_status_code()
 
@@ -54,7 +57,8 @@ def post_new():
 
     except model.IncorrectUrlName as e:
         flash(e.args[0], "error")
-        return get_new()
+        session['old_url'] = url
+        return redirect(url_for('get_new'))
 
     except model.UrlAlreadyExists as e:
         flash(e.args[0], "error")
