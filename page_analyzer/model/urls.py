@@ -115,6 +115,5 @@ def find(id):
                 "SELECT * FROM urls WHERE id=%s", (id, )
             )
             the_url = curs.fetchone()
-    conn.close()
 
     return the_url
