@@ -8,7 +8,7 @@ from flask import (Flask,
                    get_flashed_messages)
 from dotenv import load_dotenv
 import os
-import page_analyzer.db as db
+from page_analyzer import db
 from page_analyzer import url_checker
 from page_analyzer import url_validator
 from page_analyzer.language import txt
@@ -60,7 +60,8 @@ def post_new():
     except exceptions.IncorrectUrlName as e:
         flash(e.args[0], "error")
         session['old_url'] = url_name
-        return redirect(url_for('get_new'))
+        return get_new()  # A redirect is more appropriate here,
+        # but the hexlet test requires 422 code without any redirects.
 
     try:
         id = db.urls.add(normalized_name)

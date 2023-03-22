@@ -81,7 +81,7 @@ def test_add_incorrect_url(get_test_db, URL, error_message):
     response = client.post(POST_PAGE, data={'url': URL}, follow_redirects=True)
 
     assert response.status_code == 422
-    assert response.request.path == GET_PAGE
+    assert response.request.path == POST_PAGE
     assert error_message in response.text
     assert URL in response.text
 
