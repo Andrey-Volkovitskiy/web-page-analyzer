@@ -7,17 +7,16 @@ from datetime import datetime
 from urllib.parse import urlparse, urlunparse
 
 
-def add(name):
-    '''Adds new website to the database
+def normalize(name):
+    '''Checks if URL name is valid. If valid returns a normalized name.
 
-    Agruments:
-        name - URL received from a user
+    Arguments:
+        name - URL name
 
     Returns:
-        id - website id assigned by the database
-        (or raise exception if something went wrong)
+        normalized URL name
+        (or raise an excetpion if the name isn't valid)
     '''
-
     if len(name) == 0:
         raise model.IncorrectUrlName(txt.MESSAGES['URL_CANT_BE_EMPTY'])
 
@@ -29,9 +28,25 @@ def add(name):
         url_parts.scheme,
         url_parts.netloc or url_parts.path,
         '', '', '', ''))
+
     is_valid_url = validators.url(normalized_name, public=True)
     if not is_valid_url or normalized_name == '':
         raise model.IncorrectUrlName(txt.MESSAGES['INCORRECT_URL'])
+
+    return normalized_name
+
+
+def add(name):
+    '''Adds new website to the database
+
+    Agruments:
+        name - URL received from a user
+
+    Returns:
+        id - website id assigned by the database
+        (or raise exception if something went wrong)
+    '''
+    normalized_name = normalize(name)
 
     created_at = datetime.utcnow()
     with model.db.connect() as conn:
