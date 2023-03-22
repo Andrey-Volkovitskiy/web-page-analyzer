@@ -19,10 +19,10 @@ def add(url_name):
     with connect_to_db() as conn:
         with conn.cursor() as curs:
             curs.execute(
-                    """SELECT (id) FROM urls
-                       WHERE name = %s""",
-                    (url_name, )
-                )
+                """SELECT (id) FROM urls
+                    WHERE name = %s""",
+                (url_name, )
+            )
             existing_id = curs.fetchone()
 
         if existing_id:
