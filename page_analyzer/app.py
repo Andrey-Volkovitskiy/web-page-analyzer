@@ -35,14 +35,9 @@ def get_status_code():
 def get_new():
     '''Routing to display the add website form.'''
 
-    try:
-        old_url = request.form['url']
-    except KeyError:
-        old_url = ''
-
     return render_template(
         'index.html',
-        old_url=old_url,
+        old_url=request.form.get('url', ''),
         txt=txt.TEMPLATES
     ), get_status_code()
 
