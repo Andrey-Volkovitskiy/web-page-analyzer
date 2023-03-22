@@ -1,6 +1,5 @@
 from page_analyzer import model
 from page_analyzer.language import txt
-import psycopg2
 from psycopg2.extras import NamedTupleCursor
 import validators
 from datetime import datetime
@@ -50,27 +49,27 @@ def add(name):
 
     created_at = datetime.utcnow()
     with model.db.connect() as conn:
-        try:
-            with conn.cursor() as curs:
-                curs.execute(
-                    """INSERT INTO urls (name, created_at)
-                       VALUES (%s, %s)
-                       RETURNING id""",
-                    (normalized_name, created_at)
-                )
-                id = curs.fetchone()[0]
-
-        except psycopg2.errors.UniqueViolation:
-            conn.rollback()
-            with conn.cursor() as curs:
-                curs.execute(
+        with conn.cursor() as curs:
+            curs.execute(
                     """SELECT (id) FROM urls
                        WHERE name = %s""",
                     (normalized_name, )
                 )
-                id = curs.fetchone()[0]
-            raise model.UrlAlreadyExists(txt.MESSAGES['PAGE_EXISTS'], id)
+            found_id = curs.fetchone()
 
+        if found_id:
+            raise model.UrlAlreadyExists(
+                txt.MESSAGES['PAGE_EXISTS'],
+                found_id[0])
+
+        with conn.cursor() as curs:
+            curs.execute(
+                """INSERT INTO urls (name, created_at)
+                    VALUES (%s, %s)
+                    RETURNING id""",
+                (normalized_name, created_at)
+            )
+            id = curs.fetchone()[0]
     return id
 
 
