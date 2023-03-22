@@ -83,7 +83,7 @@ def show_url(id):
     url = model.urls.find(id)
 
     if not url:
-        return code_404()
+        return get_404()
 
     list_of_checks = model.checks.get_list(id)
 
@@ -111,15 +111,15 @@ def check(url_id):
 @app.errorhandler(model.DbConnecionError)
 def handle_DbConnecionError(e):
     flash(e.args[0], 'error')
-    return code_500()
+    return get_500()
 
 
-def code_404():
+def get_404():
     '''Routing for Page Not Found.'''
     return render_template('404.html', txt=txt.TEMPLATES), 404
 
 
-def code_500():
+def get_500():
     '''Routing for Internal Server Error.'''
     return render_template(
         '500.html',
