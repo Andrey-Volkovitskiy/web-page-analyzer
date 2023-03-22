@@ -1,30 +1,20 @@
 from page_analyzer import model
-from page_analyzer.language import txt
 from psycopg2.extras import NamedTupleCursor
 from datetime import datetime
 
 
-def add(url_id):
-    '''Checks a website and adds the results to the database
+def add(url_id, check_result):
+    '''Adds the results to the database
 
     Agruments:
         url_id - id of the website to checkl
+        check_result - dict with status code, h1, title,
+            description recieved from the website
 
     Returns:
         id - check id assigned by the database
         (or raise exception if something went wrong)
     '''
-    if url_id is None:
-        raise model.UrlIdIsNone(txt.MESSAGES['URL_ID_CANT_BE_NONE'])
-
-    url = model.urls.find(url_id)
-
-    if url is None:
-        raise model.UrlIdNotFound(
-            f"url_id '{url_id}' {txt.MESSAGES['ABSENT_IN_DB']}")
-
-    check_result = model.analyzer.check(url.name)
-
     with model.db.connect() as conn:
         with conn.cursor() as curs:
             curs.execute(

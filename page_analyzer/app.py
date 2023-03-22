@@ -9,7 +9,10 @@ from flask import (Flask,
 from dotenv import load_dotenv
 import os
 from page_analyzer import model
+from page_analyzer import url_checker
+from page_analyzer import url_validator
 from page_analyzer.language import txt
+from page_analyzer import exceptions
 import secrets
 
 
@@ -49,20 +52,24 @@ def get_new():
 def post_new():
     '''Routing to add new website in database.'''
 
-    url = request.form['url']
+    url_name = request.form['url']
 
     try:
-        id = model.urls.add(url)
-        flash(txt.PAGE_ADDED_SUCCESSFULLY, "success")
+        normalized_name = url_validator.normalize(url_name)
 
-    except model.IncorrectUrlName as e:
+    except exceptions.IncorrectUrlName as e:
         flash(e.args[0], "error")
-        session['old_url'] = url
+        session['old_url'] = url_name
         return redirect(url_for('get_new'))
 
-    except model.UrlAlreadyExists as e:
-        flash(e.args[0], "error")
-        id = e.args[1]
+    try:
+        id = model.urls.add(normalized_name)
+        flash(txt.PAGE_ADDED_SUCCESSFULLY, "success")
+
+    except exceptions.UrlAlreadyExists as e:
+        message, existing_id = e.args[0], e.args[1]
+        flash(message, "error")
+        id = existing_id
 
     return redirect(url_for('show_url', id=id))
 
@@ -102,17 +109,22 @@ def show_url(id):
 @app.post('/urls/<int:url_id>/checks')
 def check(url_id):
     '''Routing to check a website for SEO.'''
-    try:
-        model.checks.add(url_id=url_id)
-        flash(txt.PAGE_CHECKED_SUCCESSFULLY, "success")
+    url = model.urls.find(url_id)
 
-    except (model.DbConsistanceError, model.UrlCheckError) as e:
+    check_result = None
+    try:
+        check_result = url_checker.check(url.name)
+    except exceptions.UrlCheckError as e:
         flash(e.args[0], "error")
+
+    if check_result:
+        model.checks.add(url_id, check_result)
+        flash(txt.PAGE_CHECKED_SUCCESSFULLY, "success")
 
     return redirect(url_for('show_url', id=url_id))
 
 
-@app.errorhandler(model.DbConnecionError)
+@app.errorhandler(exceptions.DbConnecionError)
 def handle_DbConnecionError(e):
     flash(e.args[0], 'error')
     return get_500()

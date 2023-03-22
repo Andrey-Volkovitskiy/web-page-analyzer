@@ -1,6 +1,6 @@
 import psycopg2
 import os
-from page_analyzer import model
+from page_analyzer import exceptions
 from page_analyzer.language import txt
 
 
@@ -16,7 +16,7 @@ def connect():
         connection = psycopg2.connect(DATABASE_URL)
 
     except (psycopg2.OperationalError, psycopg2.ProgrammingError) as e:
-        raise model.DbConnecionError(
+        raise exceptions.DbConnecionError(
             f"{txt.MESSAGES['CANT_CONNECT_TO_DB']} "
             f"Exception '{e}'")
 

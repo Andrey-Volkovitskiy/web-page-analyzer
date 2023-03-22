@@ -1,11 +1,11 @@
 import requests
-from page_analyzer import model
 from page_analyzer.language import txt
+from page_analyzer import exceptions
 from bs4 import BeautifulSoup
 
 
 def check(url_name):
-    '''Checks a url for status code, h1, title and etc.
+    '''Checks the url for status code, h1, title and etc.
 
     Agruments:
         url_name - url of the website of interest
@@ -37,7 +37,7 @@ def check(url_name):
         result['description'] = d_tags[0]['content'] if d_tags else None
 
     except requests.exceptions.RequestException:
-        raise model.UrlCheckError(txt.MESSAGES['ERROR_DURING_CHECK'])
+        raise exceptions.UrlCheckError(txt.MESSAGES['ERROR_DURING_CHECK'])
 
     return result
 

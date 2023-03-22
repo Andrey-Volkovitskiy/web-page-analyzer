@@ -1,41 +1,11 @@
+from page_analyzer import exceptions
 from page_analyzer import model
 from page_analyzer.language import txt
 from psycopg2.extras import NamedTupleCursor
-import validators
 from datetime import datetime
-from urllib.parse import urlparse, urlunparse
 
 
-def normalize(name):
-    '''Checks if URL name is valid. If valid returns a normalized name.
-
-    Arguments:
-        name - URL name
-
-    Returns:
-        normalized URL name
-        (or raise an excetpion if the name isn't valid)
-    '''
-    if len(name) == 0:
-        raise model.IncorrectUrlName(txt.MESSAGES['URL_CANT_BE_EMPTY'])
-
-    elif len(name) > 255:
-        raise model.IncorrectUrlName(txt.MESSAGES['URL_TOO_LONG'])
-
-    url_parts = urlparse(name, scheme='http')
-    normalized_name = urlunparse((
-        url_parts.scheme,
-        url_parts.netloc or url_parts.path,
-        '', '', '', ''))
-
-    is_valid_url = validators.url(normalized_name, public=True)
-    if not is_valid_url or normalized_name == '':
-        raise model.IncorrectUrlName(txt.MESSAGES['INCORRECT_URL'])
-
-    return normalized_name
-
-
-def add(name):
+def add(url_name):
     '''Adds new website to the database
 
     Agruments:
@@ -45,29 +15,27 @@ def add(name):
         id - website id assigned by the database
         (or raise exception if something went wrong)
     '''
-    normalized_name = normalize(name)
-
     created_at = datetime.utcnow()
     with model.db.connect() as conn:
         with conn.cursor() as curs:
             curs.execute(
                     """SELECT (id) FROM urls
                        WHERE name = %s""",
-                    (normalized_name, )
+                    (url_name, )
                 )
-            found_id = curs.fetchone()
+            existing_id = curs.fetchone()
 
-        if found_id:
-            raise model.UrlAlreadyExists(
+        if existing_id:
+            raise exceptions.UrlAlreadyExists(
                 txt.MESSAGES['PAGE_EXISTS'],
-                found_id[0])
+                existing_id[0])
 
         with conn.cursor() as curs:
             curs.execute(
                 """INSERT INTO urls (name, created_at)
                     VALUES (%s, %s)
                     RETURNING id""",
-                (normalized_name, created_at)
+                (url_name, created_at)
             )
             id = curs.fetchone()[0]
     return id
