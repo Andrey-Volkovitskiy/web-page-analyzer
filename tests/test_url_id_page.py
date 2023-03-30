@@ -78,10 +78,7 @@ def test_check_correct_url(get_test_db):
         assert "Страница успешно проверена" in response2.text
 
         # database asserts
-        with connection as conn:
-            with conn.cursor(cursor_factory=NamedTupleCursor) as curs:
-                curs.execute("SELECT * FROM checks")
-                db_records = curs.fetchall()
+        db_records = get_all_db_records(connection)
         assert len(db_records) == 2
         assert db_records[0].url_id == db_records[1].url_id == 1
         assert db_records[0].status_code == db_records[1].status_code == 200
@@ -91,6 +88,13 @@ def test_check_correct_url(get_test_db):
         assert db_records[1].description == DESCRIPTION
         assert pre_1st_time <= db_records[0].created_at <= pre_2nd_time
         assert pre_2nd_time <= db_records[1].created_at
+
+
+def get_all_db_records(connection):
+    with connection as conn:
+        with conn.cursor(cursor_factory=NamedTupleCursor) as curs:
+            curs.execute("SELECT * FROM checks")
+            return curs.fetchall()
 
 
 def test_check_incorrect_url(get_test_db):
@@ -104,8 +108,5 @@ def test_check_incorrect_url(get_test_db):
     assert response.request.path == GET_PAGE
     assert "Произошла ошибка при проверке" in response.text
 
-    with connection as conn:
-        with conn.cursor(cursor_factory=NamedTupleCursor) as curs:
-            curs.execute("SELECT * FROM checks")
-            db_records = curs.fetchall()
+    db_records = get_all_db_records(connection)
     assert len(db_records) == 0
