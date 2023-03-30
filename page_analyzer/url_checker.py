@@ -51,5 +51,6 @@ def is_description(tag):
     Returns:
         True / False
     '''
+
     if tag.name == 'meta':
         return tag.get('name') == 'description' and tag.get('content')
