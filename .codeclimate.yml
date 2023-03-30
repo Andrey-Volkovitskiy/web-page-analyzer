@@ -1,3 +1,11 @@
 exclude_patterns:
   - "page_analyzer/language/ru.py"
   - "page_analyzer/language/en.py"
+
+plugins:
+  duplication:
+    enabled: true
+    config:
+      languages:
+        python:
+          python_version: 3

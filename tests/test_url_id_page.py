@@ -15,6 +15,7 @@ with app.test_request_context():
 
 
 def add_url_to_db(connection, url_name):
+    '''Adds the url to test database'''
     with connection as conn:
         with conn.cursor(cursor_factory=NamedTupleCursor) as curs:
             created_at = datetime.utcnow()
@@ -91,6 +92,7 @@ def test_check_correct_url(get_test_db):
 
 
 def get_all_db_records(connection):
+    '''Gets all rows from test database'''
     with connection as conn:
         with conn.cursor(cursor_factory=NamedTupleCursor) as curs:
             curs.execute("SELECT * FROM checks")
