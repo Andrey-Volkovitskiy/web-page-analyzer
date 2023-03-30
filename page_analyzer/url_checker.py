@@ -52,7 +52,4 @@ def is_description(tag):
         True / False
     '''
     if tag.name == 'meta':
-        try:
-            return tag['name'] == 'description' and tag['content']
-        except KeyError:
-            False
+        return tag.get('name') == 'description' and tag.get('content')
