@@ -131,11 +131,13 @@ def handle_DbConnecionError(e):
     return get_500()
 
 
+@app.errorhandler(404)
 def get_404():
     '''Routing for Page Not Found.'''
     return render_template('404.html', txt=txt.TEMPLATES), 404
 
 
+@app.errorhandler(500)
 def get_500():
     '''Routing for Internal Server Error.'''
     return render_template(
