@@ -34,7 +34,7 @@ This project was built using these tools:
 ---
 ### Installation and running
 
-The application stores data using PostgresSQL. The database schema is described in *database.sql*
+The application stores data using PostgreSQL. The database schema is described in *database.sql*
 
 - *make install* - to install dependencies
 - *make start* - to start the application (Russian user interface)
