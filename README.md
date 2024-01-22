@@ -2,9 +2,16 @@
 
 **This is the 3rd training project of "Python Developer" specialization.**
 
-Flask web app that analyzes web pages for basic SEO suitability. Just enter URL and check it out!
+*Flask web app that analyzes web pages for basic SEO suitability. Just enter URL and check it out!*
 
 Deployed at: https://web-page-analyzer.up.railway.app/
+
+* Implemented the web app using Flask and raw SQL queries
+* A PostgreSQL database deployed in a Docker container
+* Beautiful Soup library used for page parsing
+* The code covered with tests
+* CI implemented via GitHub Actions
+* Deployed at Railway
 
 ---
 ### Tests and code quality assessment:
